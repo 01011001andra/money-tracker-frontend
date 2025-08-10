@@ -1,1 +1,5 @@
-@import "tailwindcss";
+@import "tailwindcss" important;
+
+body {
+  @apply bg-purple-50 text-gray-900 antialiased;
+}
