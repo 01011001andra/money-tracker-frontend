@@ -15,16 +15,35 @@ const NavigationLayout: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-[100dvh]">
       {/* Konten halaman */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto max-w-xl mx-auto w-full h-full overflow-y-auto">
         <Outlet />
       </div>
 
       {/* Bottom Navigation */}
       <BottomNavigation
-        className="h-20 border-t-gray-500"
-        sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
+        className="h-18 border-t-gray-500 max-w-xl mx-auto w-full"
+        sx={{
+          "& .MuiBottomNavigationAction-root": {
+            color: "text.secondary",
+            minWidth: "auto",
+          },
+          "& .Mui-selected": {
+            color: "var(--color-primary)",
+          },
+          "& .MuiBottomNavigationAction-label": {
+            fontSize: 11,
+            transition: "all .2s",
+          },
+          "& .Mui-selected .MuiBottomNavigationAction-label": {
+            fontSize: 12,
+            fontWeight: 700,
+          },
+          "& .Mui-selected .iconify": {
+            color: "var(--color-primary)",
+          },
+        }}
         value={value}
         onChange={handleChange}
         showLabels

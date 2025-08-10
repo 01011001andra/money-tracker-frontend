@@ -1,9 +1,21 @@
-import * as React from "react";
+import Headers from "./components/Headers";
+import Banner from "./components/Banner";
+import ActivityCard from "./components/ActivityCard";
+import SpendingOverview from "./components/SpendingOverview";
 
 const Home = () => {
   return (
-    <div className=" h-full p-4">
-      <h1>HOME PAGE</h1>
+    <div className="min-h-screen p-4 flex flex-col gap-6 overflow-y-auto">
+      <Headers />
+
+      {/* BANNER */}
+      <Banner />
+
+      {/* Activity Card */}
+      <ActivityCard />
+
+      {/* Spending Overview */}
+      <SpendingOverview />
     </div>
   );
 };
