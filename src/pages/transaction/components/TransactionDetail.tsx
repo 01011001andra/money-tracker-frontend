@@ -1,5 +1,4 @@
 // components/TransactionDetailsDrawer.tsx
-import * as React from "react";
 import {
   SwipeableDrawer,
   Box,
