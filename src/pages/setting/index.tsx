@@ -117,7 +117,7 @@ const RowSwitch: React.FC<RowSwitchItem> = ({
 
 /* ---------- Page ---------- */
 
-export default function Profile() {
+export default function Setting() {
   const [notifDaily, setNotifDaily] = React.useState(false);
   const [notifWeekly, setNotifWeekly] = React.useState(false);
   const [notifMonthly, setNotifMonthly] = React.useState(false);
@@ -139,7 +139,7 @@ export default function Profile() {
     <Box className="w-full" sx={{ p: 2 }}>
       {/* Header */}
       <h1 className="text-center font-bold text-xl text-primary-600">
-        Profile
+        Setting
       </h1>
 
       {/* Avatar + nama */}

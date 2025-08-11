@@ -12,6 +12,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { Icon } from "@iconify/react";
+import { useNavigate } from "react-router-dom";
 
 type NotifType = "success" | "warning" | "info";
 
@@ -43,6 +44,7 @@ const iconStyleByType: Record<
 const Headers = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notif[]>([
     {
       id: 1,
@@ -59,7 +61,7 @@ const Headers = () => {
       read: true,
     },
   ]);
-
+  const goSetting = () => navigate("/setting");
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.read).length,
     [notifications]
@@ -83,9 +85,10 @@ const Headers = () => {
       {/* Avatar + Greeting */}
       <div className="flex gap-4 items-center ">
         <Avatar
+          onClick={goSetting}
           alt="Static Avatar"
           src="https://api.dicebear.com/9.x/dylan/svg?seed=Leah"
-          sx={{ width: 40, height: 40 }}
+          sx={{ width: 40, height: 40, cursor: "pointer" }}
         />
         <div className="flex flex-col">
           <span className="font-bold text-sm">Hello, Yandra!</span>

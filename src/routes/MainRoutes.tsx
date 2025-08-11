@@ -3,7 +3,7 @@ import Loadable from "@/components/Loadable";
 import NavigationLayout from "@/layouts/NavigationLayout";
 import Transaction from "@/pages/transaction";
 import Report from "@/pages/report";
-import Profile from "@/pages/profile";
+import Setting from "@/pages/setting";
 
 // render - home
 const Home = Loadable(lazy(() => import("@/pages/home/index")));
@@ -30,8 +30,8 @@ const MainRoutes = {
           element: <Report />,
         },
         {
-          path: "/profile",
-          element: <Profile />,
+          path: "/setting",
+          element: <Setting />,
         },
       ],
     },

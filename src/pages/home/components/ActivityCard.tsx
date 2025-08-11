@@ -1,3 +1,4 @@
+import * as React from "react";
 import { formatIDR } from "@/utils/helper";
 import { Icon } from "@iconify/react";
 import {
@@ -81,9 +82,8 @@ export default function ActivityCard({
       <div className="bg-white rounded-lg shadow-md px-2">
         <List>
           {items.map((it, idx) => (
-            <>
+            <React.Fragment key={it.id}>
               <ListItem
-                key={it.id}
                 className="my-1"
                 disableGutters
                 sx={{
@@ -156,7 +156,10 @@ export default function ActivityCard({
                             </Box>
                           </Box>
                         }
+                        primaryTypographyProps={{ component: "div" }}
+                        secondaryTypographyProps={{ component: "div" }} // << penting
                       />
+
                       <Typography
                         className="text-xs"
                         variant="body2"
@@ -182,7 +185,7 @@ export default function ActivityCard({
                   }}
                 />
               )}
-            </>
+            </React.Fragment>
           ))}
         </List>
       </div>
