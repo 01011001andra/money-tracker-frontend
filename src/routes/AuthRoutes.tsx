@@ -1,9 +1,10 @@
-import { lazy } from "react";
-import Loadable from "@/components/Loadable";
+// import { lazy } from "react";
+// import Loadable from "@/components/Loadable";
 import AuthLayout from "@/layouts/AuthLayout";
+import WalkThrough from "@/components/WalkThrough";
 
 // render - home
-const Login = Loadable(lazy(() => import("@/pages/login/index")));
+// const Login = Loadable(lazy(() => import("@/pages/login/index")));
 
 // ==============================|| MAIN ROUTES ||============================== //
 
@@ -16,7 +17,7 @@ const AuthRoutes = {
       children: [
         {
           path: "/login",
-          element: <Login />,
+          element: <WalkThrough />,
         },
       ],
     },

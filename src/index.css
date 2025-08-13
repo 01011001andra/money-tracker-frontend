@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@100;200;300;400;500;700&display=swap");
 @import "tailwindcss" important;
+@import "swiper/css/pagination";
+@import "swiper/css/scrollbar";
+@import "swiper/css";
+@import "swiper/css/effect-coverflow";
 
 /* Definisikan token warna di Tailwind v4 */
 @theme {
@@ -22,4 +26,17 @@
 body {
   font-family: "Rubik", sans-serif;
   @apply bg-purple-50 text-gray-900 antialiased;
+}
+
+.walkthrough-dots .swiper-pagination-bullet {
+  background: #ddd6fe;
+  opacity: 1;
+  width: 7px;
+  height: 7px;
+}
+
+.walkthrough-dots .swiper-pagination-bullet-active {
+  background: white;
+  width: 22px;
+  border-radius: 9999px;
 }
