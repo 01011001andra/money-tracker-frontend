@@ -35,7 +35,6 @@ const MainRoutes = {
         },
       ],
     },
-    { path: "*", element: <>Not Found</> },
   ],
 };
 

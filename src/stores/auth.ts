@@ -67,12 +67,10 @@ export const useAuthStore = create<AppStore>()(
           }
         },
 
-        // Login: call API -> simpan token & user
         async login({ email, password }) {
           set((s) => ({ auth: { ...s.auth, loading: true } }));
           try {
             const res = await api.post("/auth/login", { email, password });
-            // Harapkan respons: { accessToken: string, user: {...} }
             const token: string = res.data?.accessToken;
             const user: User = res.data?.user;
 

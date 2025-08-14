@@ -25,6 +25,7 @@
 
 body {
   font-family: "Rubik", sans-serif;
+  overscroll-behavior: none;
   @apply bg-purple-50 text-gray-900 antialiased;
 }
 

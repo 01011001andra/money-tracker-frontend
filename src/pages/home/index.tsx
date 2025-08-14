@@ -5,7 +5,7 @@ import SpendingOverview from "./components/SpendingOverview";
 
 const Home = () => {
   return (
-    <div className="min-h-screen p-4 flex flex-col gap-6 overflow-y-auto">
+    <div className="p-4 flex flex-col gap-6 overflow-y-auto">
       <Headers />
 
       {/* BANNER */}

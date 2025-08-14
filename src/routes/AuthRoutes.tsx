@@ -1,10 +1,10 @@
-// import { lazy } from "react";
-// import Loadable from "@/components/Loadable";
+import { lazy } from "react";
+import Loadable from "@/components/Loadable";
 import AuthLayout from "@/layouts/AuthLayout";
-import WalkThrough from "@/components/WalkThrough";
 
-// render - home
-// const Login = Loadable(lazy(() => import("@/pages/login/index")));
+// render
+const Login = Loadable(lazy(() => import("@/pages/login/index")));
+const WalkThrough = Loadable(lazy(() => import("@/components/WalkThrough")));
 
 // ==============================|| MAIN ROUTES ||============================== //
 
@@ -16,12 +16,15 @@ const AuthRoutes = {
       element: <AuthLayout />,
       children: [
         {
-          path: "/login",
+          path: "/walkthrough",
           element: <WalkThrough />,
+        },
+        {
+          path: "/login",
+          element: <Login />,
         },
       ],
     },
-    { path: "*", element: <>Not Found</> },
   ],
 };
 

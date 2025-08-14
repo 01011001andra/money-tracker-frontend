@@ -5,11 +5,8 @@ import {
   Box,
   Button,
   Checkbox,
+  Divider,
   FormControlLabel,
-  IconButton,
-  InputAdornment,
-  Paper,
-  TextField,
   Typography,
 } from "@mui/material";
 import { Icon } from "@iconify/react";
@@ -66,76 +63,78 @@ const Login: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] flex items-center justify-center bg-gray-50 p-4">
-      <Paper
-        elevation={8}
-        className="w-full max-w-sm rounded-2xl"
-        sx={{ p: 3 }}
-      >
-        <Box mb={2} textAlign="center">
-          <div
-            className="mx-auto mb-2 inline-flex h-12 w-12 items-center justify-center rounded-xl"
-            style={{ background: "var(--color-primary-50, #eef2ff)" }}
-          >
+    <div className="min-h-[100dvh] flex justify-center p-4 w-full">
+      <div className="flex flex-col w-full">
+        <Box
+          mb={4}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+          }}
+        >
+          <div className=" mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600">
             <Icon
-              icon="solar:wallet-money-bold-duotone"
-              width={24}
-              height={24}
-              className="text-primary-600"
+              icon="weui:back-filled"
+              width={20}
+              height={20}
+              className="text-white"
             />
           </div>
+          {error && (
+            <Alert severity="error" className="mb-3">
+              {error}
+            </Alert>
+          )}
           <Typography variant="h5" fontWeight={800}>
-            Masuk
+            Log in
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Gunakan email dan password Anda
-          </Typography>
-        </Box>
+          <form onSubmit={onSubmit} className="space-y-4 w-full">
+            <div className="space-y-4 w-full">
+              {/* Email */}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="Email" className="text-xs text-gray-500">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="Email"
+                  id="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="border text-sm border-gray-200 rounded-full bg-white py-3.5 px-6 focus:border-primary outline-none"
+                  placeholder="Email anda"
+                  autoComplete="email"
+                  required
+                />
+              </div>
 
-        {error && (
-          <Alert severity="error" className="mb-3">
-            {error}
-          </Alert>
-        )}
-
-        <form onSubmit={onSubmit} className="space-y-3">
-          <TextField
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            fullWidth
-            required
-            autoComplete="email"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Icon icon="mdi:email-outline" width={18} height={18} />
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          <TextField
-            label="Password"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            fullWidth
-            required
-            autoComplete="current-password"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Icon icon="mdi:lock-outline" width={18} height={18} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword((s) => !s)}
-                    edge="end"
-                    aria-label="toggle password visibility"
+              {/* Password */}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="Password" className="text-xs text-gray-500">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="Password"
+                    name="Password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="border text-sm border-gray-200 rounded-full bg-white py-3.5 px-6 pr-12 focus:border-primary outline-none w-full"
+                    placeholder="Masukkan password"
+                    autoComplete="current-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    aria-label={
+                      showPassword
+                        ? "Sembunyikan password"
+                        : "Tampilkan password"
+                    }
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary"
                   >
                     <Icon
                       icon={
@@ -144,54 +143,85 @@ const Login: React.FC = () => {
                       width={20}
                       height={20}
                     />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+                  </button>
+                </div>
+              </div>
+            </div>
 
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                  size="small"
-                />
-              }
-              label={<span className="text-sm">Ingat saya</span>}
-            />
-            <Link to="/forgot-password" className="text-sm text-blue-600">
-              Lupa password?
-            </Link>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    className="text-primary"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    size="small"
+                  />
+                }
+                label={<span className="text-sm">Ingat saya</span>}
+              />
+              <Link to="/forgot-password" className="text-sm text-primary">
+                Lupa password?
+              </Link>
+            </Box>
+
+            <Button
+              type="submit"
+              className="bg-primary rounded-3xl"
+              variant="contained"
+              size="large"
+              fullWidth
+              disableElevation
+              disabled={loading}
+              sx={{ borderRadius: 2 }}
+            >
+              {loading ? "Memproses..." : "Masuk"}
+            </Button>
+          </form>
+
+          {/* --- Separator --- */}
+          <Box mt={3} textAlign="center">
+            <Typography variant="body2" color="text.secondary">
+              Belum punya akun?{" "}
+              <Link to="/register" className="text-primary">
+                Daftar
+              </Link>
+            </Typography>
           </Box>
-
+        </Box>
+        <Divider
+          textAlign="center"
+          sx={{ fontSize: "0.75rem", color: "text.secondary" }}
+        >
+          Atau
+        </Divider>
+        <Box
+          mb={4}
+          sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+        ></Box>
+        {/* --- Tombol Google --- */}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <Button
-            type="submit"
-            variant="contained"
+            variant="outlined"
             size="large"
             fullWidth
-            disableElevation
-            disabled={loading}
-            sx={{ borderRadius: 2 }}
+            className="rounded-full border-primary text-primary"
+            startIcon={<Icon icon="logos:google-icon" width={18} height={18} />}
+            sx={{
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: 600,
+              py: 1.25,
+            }}
           >
-            {loading ? "Memproses..." : "Masuk"}
+            Lanjut dengan Google
           </Button>
-        </form>
-
-        <Box mt={3} textAlign="center">
-          <Typography variant="body2" color="text.secondary">
-            Belum punya akun?{" "}
-            <Link to="/register" className="text-blue-600">
-              Daftar
-            </Link>
-          </Typography>
         </Box>
-      </Paper>
+      </div>
     </div>
   );
 };
