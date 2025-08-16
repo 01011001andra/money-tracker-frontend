@@ -1,38 +1,61 @@
+// src/stores/app.ts
 import { create } from "zustand";
+import type { ReactNode } from "react";
+import { randomString } from "@/utils/helper";
 
-/* ============================ Types ============================ */
-export type AppState = {
-  isWalkThrough: boolean;
+type SideEntry = {
+  key: string;
+  node: ReactNode;
+  width?: number | string;
+  anchor?: "left" | "right";
+};
+type SideOp = "open" | "push" | "replace" | "back" | "close";
+type SideOpts = Omit<SideEntry, "key" | "node">;
+
+type AppState = {
+  sideStack: SideEntry[];
+  side: {
+    (op: "open" | "push" | "replace", node: ReactNode, opts?: SideOpts): void;
+    (op: "back" | "close"): void;
+  };
 };
 
-export type AppActions = {
-  setWalkThrough: (seen: boolean) => void;
-  reset: () => void;
-};
+export const useAppStore = create<AppState>((set, get) => ({
+  // states
+  sideStack: [],
 
-export type AppStore = {
-  state: AppState;
-  actions: AppActions;
-};
-
-/* ========================== Defaults ========================== */
-const defaultState = (): AppState => ({
-  isWalkThrough: false,
-});
-
-/* =========================== Store ============================ */
-export const useAppStore = create<AppStore>((set) => ({
-  state: defaultState(),
-  actions: {
-    setWalkThrough: (seen) =>
-      set((s) => ({ state: { ...s.state, isWalkThrough: seen } })),
-
-    reset: () => set(() => ({ state: defaultState() })),
-  },
+  // actions
+  side: ((op: SideOp, node?: ReactNode, opts?: SideOpts) => {
+    const { sideStack } = get();
+    switch (op) {
+      case "open":
+        if (!node) return;
+        set({ sideStack: [{ key: randomString(), node, ...opts }] });
+        break;
+      case "push":
+        if (!node) return;
+        set({
+          sideStack: [...sideStack, { key: randomString(), node, ...opts }],
+        });
+        break;
+      case "replace":
+        if (!node) return;
+        set({
+          sideStack: sideStack.length
+            ? [
+                ...sideStack.slice(0, -1),
+                { key: randomString(), node, ...opts },
+              ]
+            : [{ key: randomString(), node, ...opts }],
+        });
+        break;
+      case "back":
+        if (!sideStack.length) return;
+        set({ sideStack: sideStack.slice(0, -1) });
+        break;
+      case "close":
+        set({ sideStack: [] });
+        break;
+    }
+  }) as AppState["side"],
 }));
-
-// uncomment jika perlu, fungsinya agar tidak perlu mengambil state saat pendefinisian useAppStore(disini_selector)
-// /* ========================== Selectors ========================= */
-// export const selectState = (s: AppStore) => s.state;
-// export const selectActions = (s: AppStore) => s.actions;
-// export const selectIsWalkThrough = (s: AppStore) => s.state.isWalkThrough;

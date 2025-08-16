@@ -12,7 +12,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { Icon } from "@iconify/react";
-import { useNavigate } from "react-router-dom";
+import useRouter from "@/hooks/apps/useRouter";
+import { useUserStore } from "@/stores/user";
 
 type NotifType = "success" | "warning" | "info";
 
@@ -42,9 +43,8 @@ const iconStyleByType: Record<
 };
 
 const Headers = () => {
+  // states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notif[]>([
     {
       id: 1,
@@ -61,7 +61,13 @@ const Headers = () => {
       read: true,
     },
   ]);
-  const goSetting = () => navigate("/setting");
+
+  const open = Boolean(anchorEl);
+  const router = useRouter();
+  const { user } = useUserStore();
+
+  // actions
+  const goSetting = () => router.push("/setting");
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.read).length,
     [notifications]
@@ -87,11 +93,11 @@ const Headers = () => {
         <Avatar
           onClick={goSetting}
           alt="Static Avatar"
-          src="https://api.dicebear.com/9.x/dylan/svg?seed=Leah"
+          src={user?.image}
           sx={{ width: 40, height: 40, cursor: "pointer" }}
         />
         <div className="flex flex-col">
-          <span className="font-bold text-sm">Hello, Yandra!</span>
+          <span className="font-bold text-sm">Hello, {user?.name}!</span>
           <span className="text-xs text-gray-400">
             Lacak uang anda dengan mudah
           </span>

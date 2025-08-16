@@ -1,31 +1,23 @@
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 
 // project-imports
 import type { GuardProps } from "@/types/auth";
-import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
+import useRouter from "@/hooks/apps/useRouter";
 
 // ==============================|| AUTH GUARD ||============================== //
 
 export default function AuthGuard({ children }: GuardProps) {
-  const {
-    auth: { isAuthenticated },
-  } = useAuthStore();
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const allowedPath = ["/"];
+  const router = useRouter();
+  const { user, token } = useUserStore();
 
   useEffect(() => {
-    if (!allowedPath.includes(location.pathname) && !isAuthenticated) {
-      navigate("/login", {
-        state: {
-          from: location.pathname,
-        },
-        replace: true,
+    if (!user && !token) {
+      router.replace("/login", {
+        state: { from: location.pathname },
       });
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [user, router]);
 
   return children;
 }

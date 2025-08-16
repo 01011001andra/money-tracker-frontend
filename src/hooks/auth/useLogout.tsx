@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuthStore } from "../../stores/auth";
+import { useUserStore } from "../../stores/user";
 import api from "../../api";
 import { authKeys } from "./keys";
 
 // --- MUTATION: Logout ---
 export function useLogoutMutation() {
-  const logout = useAuthStore((s) => s.logout);
+  const setUser = useUserStore((s) => s.setUser);
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -19,7 +19,7 @@ export function useLogoutMutation() {
       }
     },
     onSettled: async () => {
-      logout();
+      setUser(null);
       // bersihkan cache auth
       await queryClient.invalidateQueries({ queryKey: authKeys.profile() });
     },

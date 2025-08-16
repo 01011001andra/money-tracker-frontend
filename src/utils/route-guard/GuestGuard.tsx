@@ -3,25 +3,24 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 // project-imports
 import type { GuardProps } from "@/types/auth";
-import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
 
 // ==============================|| GUEST GUARD ||============================== //
 
 export default function GuestGuard({ children }: GuardProps) {
-  const {
-    auth: { isAuthenticated },
-  } = useAuthStore();
+  const { user } = useUserStore();
+
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (user) {
       navigate(location?.state?.from ? location?.state?.from : "/", {
         state: { from: "" },
         replace: true,
       });
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [user, navigate, location]);
 
   return children;
 }

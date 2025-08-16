@@ -1,3 +1,4 @@
+import router from "@/routes";
 import axios from "axios";
 
 // Buat instance axios
@@ -29,7 +30,7 @@ api.interceptors.response.use(
       localStorage.removeItem("token");
 
       // Redirect ke login
-      window.location.href = "/login";
+      router.navigate("/login");
 
       // Bisa juga dispatch ke redux/pinia jika perlu
     }

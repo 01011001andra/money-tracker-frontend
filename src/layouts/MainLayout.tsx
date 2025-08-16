@@ -1,18 +1,20 @@
+import useRouter from "@/hooks/apps/useRouter";
+import { useInitQuery } from "@/hooks/auth/useInit";
 import { useLocalStorageStore } from "@/stores/localStorage";
+import { useUserStore } from "@/stores/user";
 import * as React from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 const MainLayout: React.FC<React.PropsWithChildren> = () => {
+  const router = useRouter();
   const { isWalkThrough } = useLocalStorageStore((store) => store);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { token } = useUserStore();
 
+  useInitQuery();
   React.useEffect(() => {
-    console.log(isWalkThrough);
-    if (!isWalkThrough) navigate("/walkthrough");
-    if (location.pathname == "/walkthrough" && isWalkThrough) navigate("/");
-  }, [isWalkThrough, navigate]);
+    if (!isWalkThrough) router.push("/walkthrough");
+    if (router.pathname == "/walkthrough" && isWalkThrough) router.push("/");
+  }, [isWalkThrough, router.pathname, token]);
 
   return (
     <div className="flex flex-col h-[100dvh]">

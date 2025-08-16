@@ -1,21 +1,21 @@
 import * as React from "react";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import { Icon } from "@iconify/react";
 import AuthGuard from "@/utils/route-guard/AuthGuard";
+import useRouter from "@/hooks/apps/useRouter";
 
 const NavigationLayout: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
 
   const tabValue = React.useMemo(() => {
-    const p = location.pathname;
+    const p = router.pathname;
     if (p.startsWith("/transaction")) return "/transaction";
     if (p.startsWith("/report")) return "/report";
     if (p.startsWith("/setting")) return "/setting";
     return "/";
-  }, [location.pathname]);
+  }, [router.pathname]);
 
   return (
     <AuthGuard>
@@ -49,7 +49,7 @@ const NavigationLayout: React.FC = () => {
             },
           }}
           value={tabValue}
-          onChange={(_, v) => navigate(v)}
+          onChange={(_, v) => router.push(v)}
           showLabels
         >
           <BottomNavigationAction

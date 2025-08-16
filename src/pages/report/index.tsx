@@ -27,7 +27,7 @@ const Transaction = () => {
   // };
 
   return (
-    <div className="min-h-screen p-4 flex flex-col gap-4 overflow-y-auto">
+    <div className=" p-4 flex flex-col gap-4 overflow-y-auto">
       <h1 className="text-center font-bold  text-xl text-primary-600">
         Report
       </h1>

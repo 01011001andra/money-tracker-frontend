@@ -5,13 +5,13 @@ import { Pagination } from "swiper/modules";
 import MoneyMotivation from "@/assets/money-motivation.png";
 import Waves from "@/assets/wave.svg";
 import { useLocalStorageStore } from "@/stores/localStorage";
-import { useNavigate } from "react-router-dom";
+import useRouter from "@/hooks/apps/useRouter";
 
 const WalkThrough = () => {
   const swiperRef = useRef<any>(null);
   const [isEnd, setIsEnd] = useState(false);
   const { setWalkThrough } = useLocalStorageStore((store) => store);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <div className="relative w-full min-h-[100svh] max-w-xl mx-auto overflow-hidden">
@@ -183,7 +183,7 @@ const WalkThrough = () => {
         onClick={() => {
           if (isEnd) {
             setWalkThrough(true);
-            navigate("/");
+            router.push("/");
             return;
           }
           swiperRef.current?.slideNext();

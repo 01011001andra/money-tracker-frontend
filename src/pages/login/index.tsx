@@ -10,13 +10,16 @@ import {
   Typography,
 } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import useRouter from "@/hooks/apps/useRouter";
+import { useLoginMutation } from "@/hooks/auth/useLogin";
 // import { useAuthStore } from "@/stores/auth";
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const mutation = useLoginMutation();
+
+  const router = useRouter();
+  const from = router.location.state?.from || "/";
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -34,28 +37,32 @@ const Login: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+
     const msg = validate();
     if (msg) return setError(msg);
     setError(null);
     setLoading(true);
 
+    const data = {
+      email,
+      password,
+    };
     try {
-      // TODO: panggil auth/login kamu di sini
-      // const { login } = useAuthStore.getState();
-      // await login(email, password);
+      const result = await mutation.mutateAsync(data);
+      console.log(result);
 
-      // Contoh simulasi sukses:
-      await new Promise((r) => setTimeout(r, 600));
-      if (remember) localStorage.setItem("remember_email", email);
-
-      // Setelah store isAuthenticated = true, baru redirect:
-      navigate(from, { replace: true });
+      router.replace(from);
     } catch (err: any) {
-      setError(err?.message || "Login gagal. Coba lagi.");
+      setError(err.response.data.message || "Login gagal. Coba lagi.");
     } finally {
       setLoading(false);
     }
   };
+
+  // const handleBack = () => {
+  //   // router.back();
+  // };
 
   React.useEffect(() => {
     const remembered = localStorage.getItem("remember_email");
@@ -73,14 +80,17 @@ const Login: React.FC = () => {
             gap: 1,
           }}
         >
-          <div className=" mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600">
+          {/* <div
+            className=" mb-4 inline-flex size-10 items-center justify-center rounded-xl bg-primary-600"
+            onClick={handleBack}
+          >
             <Icon
               icon="weui:back-filled"
               width={20}
               height={20}
               className="text-white"
             />
-          </div>
+          </div> */}
           {error && (
             <Alert severity="error" className="mb-3">
               {error}
@@ -89,7 +99,7 @@ const Login: React.FC = () => {
           <Typography variant="h5" fontWeight={800}>
             Log in
           </Typography>
-          <form onSubmit={onSubmit} className="space-y-4 w-full">
+          <form onSubmit={onSubmit} className="space-y-4 w-full" noValidate>
             <div className="space-y-4 w-full">
               {/* Email */}
               <div className="flex flex-col gap-2">

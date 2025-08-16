@@ -1,33 +1,27 @@
-import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "../../stores/auth";
+import { useUserStore } from "../../stores/user";
 import { authKeys } from "./keys";
 import api from "../../api";
+import type { User } from "@/types/auth";
 
 // --- Types (samakan dengan respons API kamu) ---
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-}
 
 // --- QUERY: Ambil profil user (GET /me) ---
-export function useInitQuery(options?: { enabled?: boolean }) {
-  const setUser = useAuthStore((s) => s.setUser);
-
-  const q = useQuery<User>({
+export function useInitQuery() {
+  const { setUser, token } = useUserStore((s) => s);
+  const q = useQuery({
     queryKey: authKeys.profile(),
     queryFn: async () => {
-      const { data } = await api.get<User>("/me");
+      const { data } = await api.get<User>("/auth/initial");
+      if (data) {
+        setUser(data);
+      } else {
+        setUser(null);
+      }
       return data;
     },
-    enabled: options?.enabled ?? true,
+    enabled: token ? true : false,
   });
-
-  // ganti onSuccess -> useEffect
-  React.useEffect(() => {
-    if (q.data) setUser(q.data);
-  }, [q.data, setUser]);
 
   return q;
 }

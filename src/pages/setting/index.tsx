@@ -13,6 +13,7 @@ import {
   Divider,
 } from "@mui/material";
 import { Icon } from "@iconify/react";
+import { useUserStore } from "@/stores/user";
 
 type RowButtonItem = {
   icon: string;
@@ -118,9 +119,15 @@ const RowSwitch: React.FC<RowSwitchItem> = ({
 /* ---------- Page ---------- */
 
 export default function Setting() {
+  // states
   const [notifDaily, setNotifDaily] = React.useState(false);
   const [notifWeekly, setNotifWeekly] = React.useState(false);
   const [notifMonthly, setNotifMonthly] = React.useState(false);
+
+  // hook
+  const { user } = useUserStore();
+
+  // actions
 
   const accountItems: RowButtonItem[] = [
     {
@@ -144,12 +151,9 @@ export default function Setting() {
 
       {/* Avatar + nama */}
       <div className="flex flex-col gap-2 my-8 mx-auto items-center">
-        <Avatar
-          src="https://api.dicebear.com/9.x/dylan/svg?seed=Leah"
-          sx={{ width: 72, height: 72 }}
-        />
+        <Avatar src={user?.image} sx={{ width: 72, height: 72 }} />
         <Typography variant="body1" fontWeight={700}>
-          Yandra
+          {user?.name}
         </Typography>
       </div>
 
