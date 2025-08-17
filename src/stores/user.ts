@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from "zustand";
-import { getToken } from "@/utils/helper";
+import { getToken } from "@/utils/helper/helper";
 import type { User } from "@/types/auth";
 
 // --- Types ---

@@ -9,7 +9,7 @@ const Home = () => {
   const { token, user } = useUserStore((store) => store);
 
   useEffect(() => {
-    console.log({ token, user });
+    console.log({ token, user: user });
   }, []);
   return (
     <div className="p-4 flex flex-col gap-6 overflow-y-auto">

@@ -93,7 +93,10 @@ const Headers = () => {
         <Avatar
           onClick={goSetting}
           alt="Static Avatar"
-          src={user?.image}
+          src={
+            user?.image ||
+            `https://api.dicebear.com/9.x/dylan/svg?seed=${user?.id}`
+          }
           sx={{ width: 40, height: 40, cursor: "pointer" }}
         />
         <div className="flex flex-col">

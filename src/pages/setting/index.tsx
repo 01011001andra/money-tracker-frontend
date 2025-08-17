@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useUserStore } from "@/stores/user";
+import useRouter from "@/hooks/apps/useRouter";
 
 type RowButtonItem = {
   icon: string;
@@ -124,8 +125,9 @@ export default function Setting() {
   const [notifWeekly, setNotifWeekly] = React.useState(false);
   const [notifMonthly, setNotifMonthly] = React.useState(false);
 
-  // hook
+  // hooks
   const { user } = useUserStore();
+  const router = useRouter();
 
   // actions
 
@@ -133,12 +135,12 @@ export default function Setting() {
     {
       icon: "mdi:account-circle-outline",
       label: "Edit Profile",
-      onClick: () => console.log("Edit Profile"),
+      onClick: () => router.push("/setting?sheet=edit-profile"),
     },
     {
       icon: "mdi:lock-outline",
       label: "Change Password",
-      onClick: () => console.log("Change Password"),
+      onClick: () => router.push("/setting?sheet=change-password"),
     },
   ];
 
@@ -151,7 +153,13 @@ export default function Setting() {
 
       {/* Avatar + nama */}
       <div className="flex flex-col gap-2 my-8 mx-auto items-center">
-        <Avatar src={user?.image} sx={{ width: 72, height: 72 }} />
+        <Avatar
+          src={
+            user?.image ||
+            `https://api.dicebear.com/9.x/dylan/svg?seed=${user?.id}`
+          }
+          sx={{ width: 72, height: 72 }}
+        />
         <Typography variant="body1" fontWeight={700}>
           {user?.name}
         </Typography>

@@ -1,14 +1,6 @@
 // src/pages/Login.tsx
 import * as React from "react";
-import {
-  Alert,
-  Box,
-  Button,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Button, Divider, Typography } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import useRouter from "@/hooks/apps/useRouter";
@@ -24,7 +16,6 @@ const Login: React.FC = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
-  const [remember, setRemember] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -163,17 +154,6 @@ const Login: React.FC = () => {
               alignItems="center"
               justifyContent="space-between"
             >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    className="text-primary"
-                    checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
-                    size="small"
-                  />
-                }
-                label={<span className="text-sm">Ingat saya</span>}
-              />
               <Link to="/forgot-password" className="text-sm text-primary">
                 Lupa password?
               </Link>

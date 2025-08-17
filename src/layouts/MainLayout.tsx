@@ -1,3 +1,4 @@
+import GlobalSheets from "@/providers/Sheets/GlobalSheets";
 import useRouter from "@/hooks/apps/useRouter";
 import { useInitQuery } from "@/hooks/auth/useInit";
 import { useLocalStorageStore } from "@/stores/localStorage";
@@ -20,6 +21,7 @@ const MainLayout: React.FC<React.PropsWithChildren> = () => {
     <div className="flex flex-col h-[100dvh]">
       <div className="flex-1 overflow-auto max-w-xl mx-auto w-full h-full overflow-y-auto relative">
         <Outlet />
+        <GlobalSheets />
       </div>
     </div>
   );

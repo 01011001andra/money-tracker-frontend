@@ -7,7 +7,7 @@ import {
   Divider,
 } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { formatIDR } from "@/utils/helper";
+import { formatIDR } from "@/utils/helper/helper";
 
 type Props = {
   open: boolean;

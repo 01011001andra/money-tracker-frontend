@@ -8,31 +8,31 @@ import type { User } from "@/types/auth";
 // --- Types (samakan dengan respons API kamu) ---
 
 export interface PayloadType {
+  id?: string;
   email: string;
-  password: string;
+  name: string;
+  image?: string;
 }
 
 export interface ResponseType {
-  token: string;
-  initial: {
-    user: User;
-  };
+  user: User;
 }
 
 // --- MUTATION: Login ---
-export function useLoginMutation() {
+export function useUpdateProfile() {
   const { setUser } = useUserStore((s) => s);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (payload: PayloadType) => {
-      const { data } = await api.post<ResponseType>("/auth/login", payload);
+      const { data } = await api.put<ResponseType>(`/users/${payload?.id}`, {
+        name: payload.name,
+        image: payload.image,
+      });
       return data;
     },
     onSuccess: async (res) => {
-      console.log(res);
-      setUser(res.initial.user);
-      localStorage.setItem("token", res.token);
+      setUser(res.user);
 
       // segarkan data profil agar konsisten
       await queryClient.invalidateQueries({ queryKey: authKeys.profile() });
