@@ -25,7 +25,7 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: async (payload: PayloadType) => {
-      const { data } = await api.put<ResponseType>(`/users/${payload?.id}`, {
+      const { data } = await api.put<ResponseType>(`/users/update-profile`, {
         name: payload.name,
         image: payload.image,
       });

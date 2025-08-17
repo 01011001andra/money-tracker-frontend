@@ -19,7 +19,7 @@ import {
   type UpdateProfileType,
 } from "@/types/apps/update-profile";
 import { useUserStore } from "@/stores/user";
-import { useUpdateProfile } from "@/hooks/auth/useUpdate";
+import { useUpdateProfile } from "@/hooks/auth/useUpdateProfile";
 import { convertImageFile } from "@/utils/helper/image";
 import { getApiErrorMessage } from "@/utils/helper/helper";
 import { INPUT_BG_SX, INPUT_TEXT_SX } from "@/utils/constant";
@@ -45,14 +45,14 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
     watch,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     setValue,
+    reset,
   } = useForm<UpdateProfileType>({
     resolver: zodResolver(UpdateProfileSchema),
     defaultValues: { email: "", image: "", name: "" },
     mode: "onChange",
   });
-
   const imageInputRegister = register("image", {
     async onChange(e) {
       const image = await convertImageFile(e.target.files[0], {
@@ -69,6 +69,9 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
   });
 
   const handleSave: SubmitHandler<UpdateProfileType> = async (values) => {
+    if (!user) return;
+    if (!isDirty) return;
+    if (updateProfile.isPending) return;
     updateProfile.mutate({
       id: user?.id,
       email: values.email,
@@ -78,14 +81,15 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
   };
   React.useEffect(() => {
     if (user) {
-      setValue("name", String(user?.name));
-      setValue("email", String(user?.email));
-      setValue(
-        "image",
-        user?.image ?? `https://api.dicebear.com/9.x/dylan/svg?seed=${user?.id}`
-      );
+      reset({
+        name: String(user.name ?? ""),
+        email: String(user.email ?? ""),
+        image:
+          user.image ??
+          `https://api.dicebear.com/9.x/dylan/svg?seed=${user.id}`,
+      });
     }
-  }, [user]);
+  }, [user, reset]);
 
   return (
     <div className="w-full h-full flex flex-col ">
@@ -145,7 +149,7 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
           </Box>
 
           {/* Form card */}
-          <Box className="p-4 space-y-3 max-w-xl mx-auto">
+          <Box className="p-4 space-y-2 max-w-xl mx-auto">
             <Controller
               name="name"
               control={control}
@@ -207,7 +211,9 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
             <Button
               type="submit"
               variant="contained"
-              className="flex-1 rounded-full bg-primary disabled:text-white"
+              className={`flex-1 rounded-full  disabled:bg-gray disabled:text-white ${
+                isDirty ? "bg-primary" : "bg-gray-300"
+              }`}
               startIcon={
                 updateProfile.isPending ? (
                   <Icon icon="line-md:loading-loop" width={18} />
