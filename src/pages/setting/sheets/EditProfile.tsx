@@ -22,13 +22,7 @@ import { useUserStore } from "@/stores/user";
 import { useUpdateProfile } from "@/hooks/auth/useUpdate";
 import { convertImageFile } from "@/utils/helper/image";
 import { getApiErrorMessage } from "@/utils/helper/helper";
-
-const INPUT_BG_SX = {
-  bgcolor: "common.white",
-  "&:hover": { bgcolor: "common.white" },
-  "&.Mui-focused": { bgcolor: "common.white" },
-  "&.Mui-disabled": { bgcolor: "common.white" },
-} as const;
+import { INPUT_BG_SX, INPUT_TEXT_SX } from "@/utils/constant";
 
 const BOTTOM_BAR_SX = {
   pb: "env(safe-area-inset-bottom)",
@@ -94,7 +88,7 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
   }, [user]);
 
   return (
-    <div className="w-full h-full flex flex-col bg-[rgb(249,249,249)]">
+    <div className="w-full h-full flex flex-col ">
       {/* Top App Bar */}
       <Box className="h-16 px-2 flex items-center gap-2">
         <IconButton aria-label="Back" onClick={closeTop} size="small">
@@ -114,7 +108,7 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
 
       <form
         onSubmit={handleSubmit(handleSave)}
-        className="w-full h-full flex flex-col bg-[rgb(249,249,249)]"
+        className="w-full h-full flex flex-col "
       >
         {/* Body */}
         <div className="flex-1 overflow-auto">
@@ -151,17 +145,26 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
           </Box>
 
           {/* Form card */}
-          <Box className="p-4 space-y-1 max-w-xl mx-auto">
+          <Box className="p-4 space-y-3 max-w-xl mx-auto">
             <Controller
               name="name"
               control={control}
               render={({ field }) => (
                 <TextField
+                  size="small"
                   {...field}
                   fullWidth
+                  sx={INPUT_TEXT_SX}
                   label="Name"
                   variant="outlined"
                   InputProps={{ sx: INPUT_BG_SX }}
+                  InputLabelProps={{
+                    sx: {
+                      "&.Mui-focused": {
+                        color: "var(--color-primary-600)",
+                      },
+                    },
+                  }}
                   error={!!errors.name}
                   helperText={errors.name?.message ?? " "}
                 />
@@ -173,9 +176,11 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
               control={control}
               render={({ field }) => (
                 <TextField
+                  size="small"
                   {...field}
                   disabled
                   fullWidth
+                  sx={INPUT_TEXT_SX}
                   label="Email"
                   variant="outlined"
                   InputProps={{ sx: INPUT_BG_SX }}

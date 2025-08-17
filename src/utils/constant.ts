@@ -107,3 +107,30 @@ export const moneyOverviewOption: any = {
     },
   ],
 };
+
+export const INPUT_TEXT_SX = {
+  "&:hover .MuiInputLabel-root:not(.Mui-focused):not(.Mui-disabled)": {
+    color: "var(--color-primary-600)",
+  },
+};
+export const INPUT_BG_SX = {
+  bgcolor: "common.white",
+  "&:hover": { bgcolor: "common.white" },
+  "&.Mui-focused": { bgcolor: "common.white" },
+  "&.Mui-disabled": { bgcolor: "common.white" },
+
+  // 🔽 border default/hover/focus
+  "& .MuiOutlinedInput-notchedOutline:not(.Mui-disabled)": {
+    borderColor: "rgba(0,0,0,0.12)", // default
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: "var(--color-primary-500)", // hover
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: "var(--color-primary-600)", // focus
+    borderWidth: 2,
+  },
+  "&.Mui-focused.MuiInputLabel-shrink": {
+    color: "var(--color-primary-600)",
+  },
+} as const;

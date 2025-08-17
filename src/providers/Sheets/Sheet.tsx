@@ -48,10 +48,16 @@ export default function Sheet({
       hideBackdrop={hideBackdrop ?? false}
       disableEscapeKeyDown={disableEscapeKeyDown}
       PaperProps={{
-        sx: { m: 0, height: "100dvh", borderRadius: 0, overflow: "hidden" },
+        sx: {
+          m: 0,
+          height: "100dvh",
+          borderRadius: 0,
+          overflow: "hidden",
+          bgcolor: "var(--color-primary-50)",
+        },
       }}
     >
-      {children}
+      <div className="h-full max-w-xl w-full mx-auto">{children}</div>
     </Dialog>
   );
 }
