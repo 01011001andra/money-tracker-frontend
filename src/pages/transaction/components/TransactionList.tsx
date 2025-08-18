@@ -11,40 +11,38 @@ import {
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { formatIDR } from "@/utils/helper/helper";
-
-export type TransactionItem = {
-  id: string;
-  title: string;
-  category: string;
-  date: string;
-  amount: number; // + = income, - = expense
-  note?: string;
-  icon: string;
-  iconBg: string; // contoh: "#E0E7FF"
-  iconColor: string; // contoh: "#4F46E5"
-};
+import { useGetTransaction } from "@/hooks/transaction/useGetTransaction";
+import type { Transaction } from "@/types/transaction";
+import useRouter from "@/hooks/apps/useRouter";
 
 type TransactionListProps = {
-  items: TransactionItem[];
   showChevron?: boolean;
   dense?: boolean;
-  onItemClick?: (item: TransactionItem) => void;
+  onItemClick?: (item: Transaction) => void;
 };
 
 const TransactionList: React.FC<TransactionListProps> = ({
-  items,
   showChevron = true,
   dense = false,
   onItemClick,
 }) => {
+  const router = useRouter();
+  const { data } = useGetTransaction();
+  const filteredTransaction =
+    router.query.tab == "all"
+      ? data?.data
+      : data?.data.filter(
+          (item) => item.type == router.query.tab?.toUpperCase()
+        );
+
   return (
     <List sx={{ py: 0 }}>
-      {items.map((it, idx) => (
-        <Fragment key={it.id}>
+      {filteredTransaction?.map((item, idx) => (
+        <Fragment key={item.id}>
           <ListItem
             disableGutters
             className={dense ? "" : "my-1"}
-            onClick={() => onItemClick?.(it)}
+            onClick={() => onItemClick?.(item)}
             sx={{
               px: 1,
               borderRadius: 2,
@@ -61,12 +59,12 @@ const TransactionList: React.FC<TransactionListProps> = ({
                   sx={{
                     width: 40,
                     height: 40,
-                    bgcolor: it.iconBg,
-                    color: it.iconColor,
+                    // bgcolor: item.iconBg,
+                    // color: item.iconColor,
                     boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)",
                   }}
                 >
-                  <Icon icon={it.icon} width={20} height={20} />
+                  {/* <Icon icon={item.icon} width={20} height={20} /> */}
                 </Avatar>
               </ListItemAvatar>
 
@@ -80,7 +78,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
                       fontWeight={600}
                       noWrap
                     >
-                      {it.title}
+                      {item.title}
                     </Typography>
                   }
                   secondary={
@@ -89,11 +87,11 @@ const TransactionList: React.FC<TransactionListProps> = ({
                       fontWeight={700}
                       sx={{
                         fontSize: "0.75rem",
-                        color: it.amount >= 0 ? "success.main" : "error.main",
+                        color: item.amount >= 0 ? "success.main" : "error.main",
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {formatIDR(it.amount)}
+                      {formatIDR(item.amount)}
                     </Typography>
                   }
                 />
@@ -108,12 +106,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
             </Box>
           </ListItem>
 
-          {idx < items.length - 1 && (
-            <Divider
-              component="li"
-              variant="inset"
-              sx={{ borderColor: "divider" }}
-            />
+          {idx < filteredTransaction.length - 1 && (
+            <Divider sx={{ borderColor: "divider", width: "100%" }} />
           )}
         </Fragment>
       ))}

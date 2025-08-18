@@ -1,4 +1,5 @@
 import router from "@/routes";
+import { useUserStore } from "@/stores/user";
 import axios from "axios";
 
 // Buat instance axios
@@ -14,6 +15,13 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // if (config.method?.toLowerCase() === "get") {
+    //   const optOut = (config.headers as any)?.["x-cache-bust"] === false;
+    //   if (!optOut) {
+    //     config.params = { ...(config.params || {}), _t: Date.now() };
+    //   }
+    // }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -26,13 +34,11 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       console.warn("Token invalid atau expired");
 
-      // Hapus token
       localStorage.removeItem("token");
 
-      // Redirect ke login
       router.navigate("/login");
 
-      // Bisa juga dispatch ke redux/pinia jika perlu
+      useUserStore.setState({ user: null });
     }
     return Promise.reject(error);
   }

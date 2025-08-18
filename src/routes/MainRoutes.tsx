@@ -1,9 +1,9 @@
 import { lazy } from "react";
 import Loadable from "@/components/Loadable";
 import NavigationLayout from "@/layouts/NavigationLayout";
-import Transaction from "@/pages/transaction";
 import Report from "@/pages/report";
 import Setting from "@/pages/setting";
+import TransactionPage from "@/pages/transaction";
 
 // render - home
 const Home = Loadable(lazy(() => import("@/pages/home/index")));
@@ -23,7 +23,7 @@ const MainRoutes = {
         },
         {
           path: "/transaction",
-          element: <Transaction />,
+          element: <TransactionPage />,
         },
         {
           path: "/report",

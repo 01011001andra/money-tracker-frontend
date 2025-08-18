@@ -49,21 +49,21 @@ const ChangePassword: React.FC<SheetScreenProps> = ({
     if (!user) return;
     if (!isDirty) return;
     if (updateProfile.isPending) return;
-    updateProfile.mutate({
-      oldPassword: values.oldPassword,
-      newPassword: values.newPassword,
-      confirmPassword: values.confirmPassword,
-    });
-  };
-  React.useEffect(() => {
-    if (user) {
+    try {
+      await updateProfile.mutateAsync({
+        oldPassword: values.oldPassword,
+        newPassword: values.newPassword,
+        confirmPassword: values.confirmPassword,
+      });
       reset({
         oldPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
+    } catch (error) {
+      console.error(error);
     }
-  }, [user, reset]);
+  };
 
   return (
     <div className="w-full h-full flex flex-col ">
@@ -91,78 +91,111 @@ const ChangePassword: React.FC<SheetScreenProps> = ({
         {/* Body */}
         <div className="flex-1 overflow-auto">
           {/* Form card */}
-          <Box className="p-4 space-y-2 max-w-xl mx-auto">
+          <Box className="p-4 space-y-4 max-w-xl mx-auto">
             <Controller
               name="oldPassword"
               control={control}
-              render={({ field }) => (
-                <TextField
-                  size="small"
-                  {...field}
-                  fullWidth
-                  sx={INPUT_TEXT_SX}
-                  label="Old Password"
-                  variant="outlined"
-                  InputProps={{ sx: INPUT_BG_SX }}
-                  InputLabelProps={{
-                    sx: {
-                      "&.Mui-focused": {
-                        color: "var(--color-primary-600)",
+              render={({ field }) => {
+                return (
+                  <TextField
+                    size="small"
+                    {...field}
+                    fullWidth
+                    sx={INPUT_TEXT_SX}
+                    label="Old Password"
+                    variant="outlined"
+                    error={!!errors.oldPassword}
+                    helperText={errors.oldPassword?.message}
+                    slotProps={{
+                      formHelperText: {
+                        sx: {
+                          display: errors.oldPassword?.message
+                            ? "block"
+                            : "none",
+                        },
                       },
-                    },
-                  }}
-                  error={!!errors.oldPassword}
-                  helperText={errors.oldPassword?.message ?? " "}
-                />
-              )}
+                      inputLabel: {
+                        sx: {
+                          "&.Mui-focused": {
+                            color: "var(--color-primary-600)",
+                          },
+                        },
+                      },
+                      input: { sx: INPUT_BG_SX },
+                    }}
+                  />
+                );
+              }}
             />
             <Controller
               name="newPassword"
               control={control}
-              render={({ field }) => (
-                <TextField
-                  size="small"
-                  {...field}
-                  fullWidth
-                  sx={INPUT_TEXT_SX}
-                  label="New Password"
-                  variant="outlined"
-                  InputProps={{ sx: INPUT_BG_SX }}
-                  InputLabelProps={{
-                    sx: {
-                      "&.Mui-focused": {
-                        color: "var(--color-primary-600)",
+              render={({ field }) => {
+                return (
+                  <TextField
+                    size="small"
+                    {...field}
+                    fullWidth
+                    sx={INPUT_TEXT_SX}
+                    label="New Password"
+                    variant="outlined"
+                    error={!!errors.newPassword}
+                    helperText={errors.newPassword?.message ?? " "}
+                    slotProps={{
+                      formHelperText: {
+                        sx: {
+                          display: errors.newPassword?.message
+                            ? "block"
+                            : "none",
+                        },
                       },
-                    },
-                  }}
-                  error={!!errors.newPassword}
-                  helperText={errors.newPassword?.message ?? " "}
-                />
-              )}
+                      inputLabel: {
+                        sx: {
+                          "&.Mui-focused": {
+                            color: "var(--color-primary-600)",
+                          },
+                        },
+                      },
+                      input: { sx: INPUT_BG_SX },
+                    }}
+                  />
+                );
+              }}
             />
             <Controller
               name="confirmPassword"
               control={control}
-              render={({ field }) => (
-                <TextField
-                  size="small"
-                  {...field}
-                  fullWidth
-                  sx={INPUT_TEXT_SX}
-                  label="Confirm Password"
-                  variant="outlined"
-                  InputProps={{ sx: INPUT_BG_SX }}
-                  InputLabelProps={{
-                    sx: {
-                      "&.Mui-focused": {
-                        color: "var(--color-primary-600)",
+              render={({ field }) => {
+                return (
+                  <TextField
+                    size="small"
+                    {...field}
+                    fullWidth
+                    sx={INPUT_TEXT_SX}
+                    label="Confirm Password"
+                    variant="outlined"
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword?.message ?? " "}
+                    slotProps={{
+                      formHelperText: {
+                        sx: {
+                          display: errors.confirmPassword?.message
+                            ? "block"
+                            : "none",
+                        },
                       },
-                    },
-                  }}
-                  error={!!errors.confirmPassword}
-                  helperText={errors.confirmPassword?.message ?? " "}
-                />
-              )}
+                      inputLabel: {
+                        sx: {
+                          "&.Mui-focused": {
+                            color: "var(--color-primary-600)",
+                          },
+                        },
+                      },
+                      input: { sx: INPUT_BG_SX },
+                    }}
+                  />
+                );
+              }}
             />
           </Box>
         </div>

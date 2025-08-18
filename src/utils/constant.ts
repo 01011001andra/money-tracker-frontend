@@ -113,6 +113,7 @@ export const INPUT_TEXT_SX = {
     color: "var(--color-primary-600)",
   },
 };
+
 export const INPUT_BG_SX = {
   bgcolor: "common.white",
   "&:hover": { bgcolor: "common.white" },

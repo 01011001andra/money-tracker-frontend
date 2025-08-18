@@ -1,18 +1,14 @@
+import useRouter from "@/hooks/apps/useRouter";
 import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 
-type TabKey = "income" | "expenses" | "all";
+const TransactionTabs: React.FC = () => {
+  const router = useRouter();
 
-type TransactionTabsProps = {
-  tab: TabKey;
-  setTab: React.Dispatch<React.SetStateAction<TabKey>>;
-};
-
-const TransactionTabs: React.FC<TransactionTabsProps> = ({ tab, setTab }) => {
   return (
     <ToggleButtonGroup
-      value={tab}
+      value={router.query.tab}
       exclusive
-      onChange={(_, v) => v && setTab(v)}
+      onChange={(_, v) => v && router.push(`/transaction?tab=${v}`)}
       color="primary"
       className="bg-primary-100 w-full "
       sx={{
@@ -41,7 +37,7 @@ const TransactionTabs: React.FC<TransactionTabsProps> = ({ tab, setTab }) => {
       <ToggleButton value="income" className="w-full">
         Pemasukan
       </ToggleButton>
-      <ToggleButton value="expenses" className="w-full">
+      <ToggleButton value="expense" className="w-full">
         Pengeluaran
       </ToggleButton>
     </ToggleButtonGroup>

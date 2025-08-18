@@ -149,7 +149,7 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
           </Box>
 
           {/* Form card */}
-          <Box className="p-4 space-y-2 max-w-xl mx-auto">
+          <Box className="p-4 space-y-5 max-w-xl mx-auto">
             <Controller
               name="name"
               control={control}
@@ -161,13 +161,20 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
                   sx={INPUT_TEXT_SX}
                   label="Name"
                   variant="outlined"
-                  InputProps={{ sx: INPUT_BG_SX }}
-                  InputLabelProps={{
-                    sx: {
-                      "&.Mui-focused": {
-                        color: "var(--color-primary-600)",
+                  slotProps={{
+                    formHelperText: {
+                      sx: {
+                        display: errors.name?.message ? "block" : "none",
                       },
                     },
+                    inputLabel: {
+                      sx: {
+                        "&.Mui-focused": {
+                          color: "var(--color-primary-600)",
+                        },
+                      },
+                    },
+                    input: { sx: INPUT_BG_SX },
                   }}
                   error={!!errors.name}
                   helperText={errors.name?.message ?? " "}
@@ -187,7 +194,21 @@ const EditProfile: React.FC<SheetScreenProps> = ({ closeTop, closeSelf }) => {
                   sx={INPUT_TEXT_SX}
                   label="Email"
                   variant="outlined"
-                  InputProps={{ sx: INPUT_BG_SX }}
+                  slotProps={{
+                    formHelperText: {
+                      sx: {
+                        display: errors.email?.message ? "block" : "none",
+                      },
+                    },
+                    inputLabel: {
+                      sx: {
+                        "&.Mui-focused": {
+                          color: "var(--color-primary-600)",
+                        },
+                      },
+                    },
+                    input: { sx: INPUT_BG_SX },
+                  }}
                   error={!!errors.email}
                   helperText={errors.email?.message ?? " "}
                 />

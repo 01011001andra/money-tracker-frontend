@@ -11,7 +11,7 @@ const Login: React.FC = () => {
   const mutation = useLoginMutation();
 
   const router = useRouter();
-  const from = router.location.state?.from || "/";
+  // const from = router.location.state?.from || "/";
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -43,7 +43,7 @@ const Login: React.FC = () => {
       const result = await mutation.mutateAsync(data);
       console.log(result);
 
-      router.replace(from);
+      router.push("/");
     } catch (err: any) {
       setError(err.response.data.message || "Login gagal. Coba lagi.");
     } finally {
@@ -161,15 +161,22 @@ const Login: React.FC = () => {
 
             <Button
               type="submit"
-              className="bg-primary rounded-3xl"
+              className="bg-primary rounded-3xl text-white"
               variant="contained"
               size="large"
               fullWidth
               disableElevation
               disabled={loading}
               sx={{ borderRadius: 2 }}
+              startIcon={
+                loading ? (
+                  <Icon icon="line-md:loading-loop" width={18} />
+                ) : (
+                  <Icon icon="tabler:device-floppy" width={18} />
+                )
+              }
             >
-              {loading ? "Memproses..." : "Masuk"}
+              {loading ? "Loging in..." : "Login"}
             </Button>
           </form>
 

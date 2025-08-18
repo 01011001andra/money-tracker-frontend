@@ -15,6 +15,7 @@ import {
 import { Icon } from "@iconify/react";
 import { useUserStore } from "@/stores/user";
 import useRouter from "@/hooks/apps/useRouter";
+import { useLogoutMutation } from "@/hooks/auth/useLogout";
 
 type RowButtonItem = {
   icon: string;
@@ -128,8 +129,12 @@ export default function Setting() {
   // hooks
   const { user } = useUserStore();
   const router = useRouter();
+  const logout = useLogoutMutation();
 
   // actions
+  const handleLogout = async () => {
+    logout.mutate();
+  };
 
   const accountItems: RowButtonItem[] = [
     {
@@ -201,7 +206,7 @@ export default function Setting() {
             icon="mdi:logout"
             label="Logout"
             color="error"
-            onClick={() => console.log("Logout")}
+            onClick={handleLogout}
           />
         </SectionCard>
       </div>

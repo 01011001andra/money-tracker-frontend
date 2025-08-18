@@ -8,13 +8,15 @@ import {
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { formatIDR } from "@/utils/helper/helper";
-import type { TransactionItem } from "./TransactionList";
+import type { Transaction } from "@/types/transaction";
+import dayjs from "dayjs";
+import useRouter from "@/hooks/apps/useRouter";
 
 type Props = {
   open: boolean;
   onOpen: () => void;
   onClose: () => void;
-  item?: TransactionItem | null;
+  item?: Transaction | null;
 };
 
 export default function TransactionDetailsDrawer({
@@ -23,6 +25,8 @@ export default function TransactionDetailsDrawer({
   onClose,
   item,
 }: Props) {
+  const router = useRouter();
+
   // Bar kecil penanda bisa di-swipe
   const Puller = () => (
     <Box
@@ -39,7 +43,11 @@ export default function TransactionDetailsDrawer({
       }}
     />
   );
-
+  const handleEdit = async () => {
+    router.push(
+      `/transaction?sheet=transaction-action&tab=${router.query.tab}&id=${item?.id}`
+    );
+  };
   return (
     <SwipeableDrawer
       anchor="bottom"
@@ -72,6 +80,7 @@ export default function TransactionDetailsDrawer({
             <Icon icon="mdi:close" width={20} height={20} />
           </IconButton>
         </Box>
+
         <Divider />
 
         {/* Content */}
@@ -89,13 +98,15 @@ export default function TransactionDetailsDrawer({
               sx={{ display: "inline-flex", alignItems: "center", gap: 0.75 }}
             >
               <Icon icon="solar:folder-2-outline" width={18} height={18} />
-              <span>{item?.category ?? "-"}</span>
+              <span>{item?.category?.name ?? "-"}</span>
             </Box>
             <Box
               sx={{ display: "inline-flex", alignItems: "center", gap: 0.75 }}
             >
               <Icon icon="solar:calendar-linear" width={18} height={18} />
-              <span>{item?.date ?? "-"}</span>
+              <span>
+                {dayjs(item?.transactionDate).format("DD MMMM YYYY") ?? "-"}
+              </span>
             </Box>
           </Box>
 
@@ -115,7 +126,7 @@ export default function TransactionDetailsDrawer({
               justifyContent: "end",
             }}
           >
-            <IconButton color="primary">
+            <IconButton color="primary" onClick={handleEdit}>
               <Icon icon="mdi:pencil" width={20} height={20} />
             </IconButton>
             <IconButton color="error">

@@ -1,13 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
 import { isAxiosError } from "axios";
 
-export const formatIDR = (n: number) =>
-  (n >= 0 ? "+" : "−") +
-  new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(Math.abs(n));
+export const formatIDR = (v: number | "" | null | undefined) =>
+  v === "" || v == null
+    ? ""
+    : new Intl.NumberFormat("en-US", {
+        maximumFractionDigits: 0,
+      }).format(Number(v));
+
+export const onlyDigitsToNumber = (s: string) => {
+  const digits = s.replace(/[^\d]/g, "");
+  return digits ? Number(digits) : 0;
+};
 
 export const randomString = () => {
   return uuidv4();

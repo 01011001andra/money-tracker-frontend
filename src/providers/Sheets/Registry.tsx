@@ -1,5 +1,6 @@
 import ChangePassword from "@/pages/setting/sheets/ChangePassword";
 import EditProfile from "@/pages/setting/sheets/EditProfile";
+import TransactionAction from "@/pages/transaction/sheets/TransactionAction";
 import * as React from "react";
 
 export type SheetScreenProps = {
@@ -16,4 +17,5 @@ export const SHEET_REGISTRY: Record<
 > = {
   "edit-profile": EditProfile,
   "change-password": ChangePassword,
+  "transaction-action": TransactionAction,
 };
