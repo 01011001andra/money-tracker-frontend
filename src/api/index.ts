@@ -4,7 +4,7 @@ import axios from "axios";
 
 // Buat instance axios
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL, // Ganti sesuai API kamu
+  baseURL: 'https://money-tracker-backend-psi.vercel.app/api/v1', // Ganti sesuai API kamu
   timeout: 10000, // 10 detik
 });
 
