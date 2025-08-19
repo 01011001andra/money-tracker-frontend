@@ -4,14 +4,26 @@ import api from "../../api";
 import type { ResponseType } from "@/types/http-resource";
 import type { Transaction } from "@/types/transaction";
 import { key } from "./keys";
+import useRouter from "../apps/useRouter";
 
 export function useGetTransaction(id?: string, opts?: { enabled?: boolean }) {
   const qc = useQueryClient();
-
+  const router = useRouter();
+  const filterQuery = router.query.filter;
+  const filter =
+    filterQuery == "day"
+      ? "filter=day"
+      : filterQuery == "week"
+      ? "filter=week"
+      : filterQuery == "month"
+      ? "filter=month"
+      : filterQuery == "year"
+      ? "filter=year"
+      : "";
   const q = useQuery({
     queryKey: key.transaction(id),
     queryFn: async () => {
-      const url = id ? `/transaction/${id}` : "/transaction";
+      const url = id ? `/transaction/${id}` : `/transaction?${filter}`;
       const { data } = await api.get<ResponseType<Transaction | Transaction[]>>(
         url
       );

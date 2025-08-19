@@ -125,6 +125,13 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
         console.error(err);
       });
   };
+  const handleBack = () => {
+    closeTop();
+    if (router.query.id && router.query.sheet) {
+      router.setQuery({ id: null, sheet: null });
+    }
+  };
+
   React.useEffect(() => {
     if (Array.isArray(detailTransaction?.data)) return;
 
@@ -141,7 +148,7 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
     <div className="w-full h-full flex flex-col ">
       {/* Top App Bar */}
       <Box className="h-16 px-2 flex items-center gap-2">
-        <IconButton aria-label="Back" onClick={closeTop} size="small">
+        <IconButton aria-label="Back" onClick={() => handleBack()} size="small">
           <Icon icon="tabler:arrow-left" width={22} />
         </IconButton>
         <h1 className="font-bold text-primary">
@@ -419,7 +426,6 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
                   multiline
                   rows={3}
                   error={!!errors.note}
-                  helperText={errors.note?.message}
                   sx={INPUT_TEXT_SX}
                   slotProps={{
                     formHelperText: {

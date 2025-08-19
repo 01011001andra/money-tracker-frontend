@@ -1,9 +1,8 @@
-import * as React from "react";
 // import TransactionDetailsDrawer from "./components/ReportDetail";
 import EChart from "@/components/Echart";
 import { moneyOverviewOption } from "@/utils/constant";
 import { Box, Typography } from "@mui/material";
-import PeriodDropdown, { type PeriodKey } from "@/components/PeriodDropdown";
+import PeriodDropdown from "@/components/PeriodDropdown";
 
 // type TransactionItem = {
 //   id: string;
@@ -18,7 +17,6 @@ import PeriodDropdown, { type PeriodKey } from "@/components/PeriodDropdown";
 
 const Transaction = () => {
   // const [open, setOpen] = React.useState(false);
-  const [period, setPeriod] = React.useState<PeriodKey>("today");
   // const [selected, setSelected] = React.useState<TransactionItem | null>(null);
 
   // const handleItemClick = (item: TransactionItem) => {
@@ -35,7 +33,7 @@ const Transaction = () => {
         <Typography variant="subtitle1" fontWeight={700}>
           Semua Transaksi
         </Typography>
-        <PeriodDropdown value={period} onChange={setPeriod} />
+        <PeriodDropdown />
       </Box>
       <div className="bg-white p-4 rounded-lg flex flex-col">
         <span className="text-gray-500 text-xs">Ringkasan Uang </span>

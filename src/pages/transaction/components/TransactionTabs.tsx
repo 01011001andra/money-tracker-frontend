@@ -8,7 +8,7 @@ const TransactionTabs: React.FC = () => {
     <ToggleButtonGroup
       value={router.query.tab}
       exclusive
-      onChange={(_, v) => v && router.push(`/transaction?tab=${v}`)}
+      onChange={(_, v) => router.setQuery((prev) => ({ ...prev, tab: v }))}
       color="primary"
       className="bg-primary-100 w-full "
       sx={{

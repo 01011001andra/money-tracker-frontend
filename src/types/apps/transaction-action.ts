@@ -8,7 +8,7 @@ export const TransactionActionSchema = z.object({
   amount: z.number().gt(0, { message: "Amount is required" }),
   transactionDate: z.string().min(1, "Date is required"),
   categoryId: z.string().min(1, "Category is required"),
-  note: z.string().optional(),
+  note: z.any().optional(),
 });
 
 export type TransactionActionType = z.infer<typeof TransactionActionSchema>;

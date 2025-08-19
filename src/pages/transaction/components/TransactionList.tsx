@@ -27,14 +27,17 @@ const TransactionList: React.FC<TransactionListProps> = ({
   onItemClick,
 }) => {
   const router = useRouter();
-  const { data } = useGetTransaction();
+  const { data, refetch } = useGetTransaction();
+  const list = (data?.data as Transaction[]) ?? [];
+
   const filteredTransaction =
     router.query.tab == "all"
-      ? data?.data
-      : data?.data.filter(
-          (item) => item.type == router.query.tab?.toUpperCase()
-        );
+      ? list
+      : list.filter((item) => item.type == router.query.tab?.toUpperCase());
 
+  React.useEffect(() => {
+    refetch();
+  }, [router.query.filter]);
   return (
     <List sx={{ py: 0 }}>
       {filteredTransaction?.map((item, idx) => (

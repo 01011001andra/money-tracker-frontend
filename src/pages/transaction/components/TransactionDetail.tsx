@@ -11,6 +11,7 @@ import { formatIDR } from "@/utils/helper/helper";
 import type { Transaction } from "@/types/transaction";
 import dayjs from "dayjs";
 import useRouter from "@/hooks/apps/useRouter";
+import { useDeleteTr } from "@/hooks/transaction/useDeleteTr";
 
 type Props = {
   open: boolean;
@@ -25,6 +26,7 @@ export default function TransactionDetailsDrawer({
   onClose,
   item,
 }: Props) {
+  const mutation = useDeleteTr();
   const router = useRouter();
 
   // Bar kecil penanda bisa di-swipe
@@ -44,9 +46,18 @@ export default function TransactionDetailsDrawer({
     />
   );
   const handleEdit = async () => {
-    router.push(
-      `/transaction?sheet=transaction-action&tab=${router.query.tab}&id=${item?.id}`
-    );
+    router.setQuery((prev) => {
+      return {
+        ...prev,
+        sheet: "transaction-action",
+        id: item?.id,
+      };
+    });
+  };
+  const handleDelete = async () => {
+    if (!item) return;
+    mutation.mutateAsync(item);
+    onClose();
   };
   return (
     <SwipeableDrawer
@@ -129,7 +140,7 @@ export default function TransactionDetailsDrawer({
             <IconButton color="primary" onClick={handleEdit}>
               <Icon icon="mdi:pencil" width={20} height={20} />
             </IconButton>
-            <IconButton color="error">
+            <IconButton color="error" onClick={handleDelete}>
               <Icon icon="mdi:trash-can-outline" width={20} height={20} />
             </IconButton>
             <IconButton>

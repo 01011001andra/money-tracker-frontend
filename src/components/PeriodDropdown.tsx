@@ -7,30 +7,25 @@ import {
   ListItemText,
 } from "@mui/material";
 import { Icon } from "@iconify/react";
+import useRouter from "@/hooks/apps/useRouter";
 
-export type PeriodKey = "today" | "thisWeek" | "thisMonth" | "thisYear";
+export type PeriodKey = "day" | "week" | "month" | "year";
 
 const LABELS: Record<PeriodKey, string> = {
-  today: "Hari ini",
-  thisWeek: "Minggu ini",
-  thisMonth: "Bulan ini",
-  thisYear: "Tahun ini",
+  day: "Today",
+  week: "This week",
+  month: "This month",
+  year: "This year",
 };
 
-type PeriodDropdownProps = {
-  value: PeriodKey;
-  onChange: (v: PeriodKey) => void;
-};
-
-export default function PeriodDropdown({
-  value,
-  onChange,
-}: PeriodDropdownProps) {
+export default function PeriodDropdown() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const router = useRouter();
+  const filterQuery = router.query.filter as PeriodKey;
 
   const handleSelect = (v: PeriodKey) => {
-    onChange(v);
+    router.setQuery((prev) => ({ ...prev, filter: v }), { replace: true });
     setAnchorEl(null);
   };
 
@@ -51,7 +46,7 @@ export default function PeriodDropdown({
           "&:hover": { backgroundColor: "transparent", color: "text.primary" },
         }}
       >
-        {LABELS[value]}
+        {LABELS[filterQuery]}
       </Button>
 
       <Menu
@@ -62,15 +57,15 @@ export default function PeriodDropdown({
       >
         {(
           [
-            { key: "today", icon: "mdi:calendar-today" },
-            { key: "thisWeek", icon: "mdi:calendar-week" },
-            { key: "thisMonth", icon: "mdi:calendar-month" },
-            { key: "thisYear", icon: "mdi:calendar" },
+            { key: "day", icon: "mdi:calendar-today" },
+            { key: "week", icon: "mdi:calendar-week" },
+            { key: "month", icon: "mdi:calendar-month" },
+            { key: "year", icon: "mdi:calendar" },
           ] as { key: PeriodKey; icon: string }[]
         ).map(({ key, icon }) => (
           <MenuItem
             key={key}
-            selected={value === key}
+            selected={filterQuery === key}
             onClick={() => handleSelect(key)}
             sx={{ py: 1 }}
           >
@@ -78,7 +73,9 @@ export default function PeriodDropdown({
               <Icon icon={icon} width={18} height={18} />
             </ListItemIcon>
             <ListItemText>{LABELS[key]}</ListItemText>
-            {value === key && <Icon icon="mdi:check" width={18} height={18} />}
+            {filterQuery === key && (
+              <Icon icon="mdi:check" width={18} height={18} />
+            )}
           </MenuItem>
         ))}
       </Menu>

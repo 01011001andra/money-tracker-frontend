@@ -59,15 +59,21 @@ export default function useRouter() {
         | ((prev: Record<string, string>) => Record<string, any>),
       opts?: { replace?: boolean; keepNull?: boolean }
     ) => {
+      // mulai dari query yang ada
+      const sp = new URLSearchParams(searchParams);
+
+      // buat prevObj
       const prevObj: Record<string, string> = {};
-      searchParams.forEach((v, k) => (prevObj[k] = v));
+      sp.forEach((v, k) => (prevObj[k] = v));
+
+      // hitung nextObj (bisa lewat callback)
       const nextObj = typeof next === "function" ? next(prevObj) : next;
 
-      const sp = new URLSearchParams();
+      // apply perubahan di atas sp
       Object.entries(nextObj).forEach(([k, v]) => {
         if (v === null || v === undefined) {
           if (opts?.keepNull) sp.set(k, String(v));
-          // else: skip to remove key
+          else sp.delete(k); // HAPUS key
         } else {
           sp.set(k, String(v));
         }

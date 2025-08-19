@@ -28,9 +28,7 @@ export function useCreateUpdateTr() {
       });
       return data;
     },
-    onSuccess: async (res, variables) => {
-      console.log(variables);
-
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: key.transaction(),
       });
