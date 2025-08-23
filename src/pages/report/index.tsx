@@ -2,7 +2,7 @@
 import EChart from "@/components/Echart";
 import { moneyOverviewOption } from "@/utils/constant";
 import { Box, Typography } from "@mui/material";
-import PeriodDropdown from "@/components/PeriodDropdown";
+// import PeriodDropdown from "@/components/PeriodDropdown";
 
 // type TransactionItem = {
 //   id: string;
@@ -33,7 +33,7 @@ const Transaction = () => {
         <Typography variant="subtitle1" fontWeight={700}>
           Semua Transaksi
         </Typography>
-        <PeriodDropdown />
+        {/* <PeriodDropdown /> */}
       </Box>
       <div className="bg-white p-4 rounded-lg flex flex-col">
         <span className="text-gray-500 text-xs">Ringkasan Uang </span>
