@@ -1,47 +1,56 @@
 import * as React from "react";
 import TransactionTabs from "./components/TransactionTabs";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import TransactionDetailsDrawer from "./components/TransactionDetail";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import useRouter from "@/hooks/apps/useRouter";
 import type { Transaction } from "@/types/transaction";
 import PeriodDropdown from "@/components/PeriodDropdown";
 import TransactionList from "./components/TransactionList";
+import { useGetTransaction } from "@/hooks/transaction/useGetTransaction";
 
 const TransactionPage = () => {
-  // hooks
-  const router = useRouter();
-  const activeTab = router.query.tab as "all" | "income" | "expense";
-
   // states
+  const [page, setPage] = React.useState(1);
+  const [tabs, setTabs] = React.useState<undefined | "income" | "expense">(
+    undefined
+  );
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<Transaction | null>(null);
+
+  // hooks
+  const router = useRouter();
+  const { data, refetch } = useGetTransaction(null, {
+    enabled: false,
+    page: String(page),
+  });
 
   const handleItemClick = (item: Transaction) => {
     setSelected(item);
     setOpen(true);
   };
 
+  const handlePaginate = (type: "previous" | "next") => {
+    if (!data?.meta) return;
+
+    if (type == "previous") {
+      if (data?.meta?.page <= 1) return;
+      setPage((prev) => prev - 1);
+    }
+    if (type == "next") {
+      if (page >= data?.meta.totalPages) return;
+      setPage((prev) => prev + 1);
+    }
+  };
+
   const handleOpenAdd = () => {
     router.setQuery({ sheet: "transaction-action" });
   };
 
-  const tab = () => {
-    if (activeTab == "all") {
-      return "All Transaction";
-    }
-    if (activeTab == "income") {
-      return "Income";
-    }
-
-    if (activeTab == "expense") {
-      return "Expense";
-    }
-  };
-
   React.useEffect(() => {
-    if (!router.query.tab) {
-      router.push("/transaction?tab=all");
+    if (!router.query.tab && !router.query.filter) {
+      router.push("/transaction?tab=all&filter=all");
+      refetch();
     }
   }, [router]);
 
@@ -58,7 +67,12 @@ const TransactionPage = () => {
           Transaksi
         </h1>
 
-        <TransactionTabs />
+        <TransactionTabs
+          setTabs={setTabs}
+          page={page}
+          setPage={setPage}
+          tabs={tabs}
+        />
 
         <Box>
           <div className="flex flex-col gap-2">
@@ -67,13 +81,36 @@ const TransactionPage = () => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <Typography variant="subtitle1" fontWeight={700}>
-                {tab()}
-              </Typography>
-              <PeriodDropdown />
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 4,
+                }}
+              >
+                <IconButton
+                  onClick={() => {
+                    handlePaginate("previous");
+                  }}
+                  className="bg-primary text-white"
+                >
+                  <Icon icon={"ooui:next-rtl"} fontSize={12} />
+                </IconButton>
+                <span>{page}</span>
+                <IconButton
+                  onClick={() => {
+                    handlePaginate("next");
+                  }}
+                  className="bg-primary text-white"
+                >
+                  <Icon icon={"ooui:next-ltr"} fontSize={12} />
+                </IconButton>
+              </Box>
+              <PeriodDropdown setPage={setPage} />
             </Box>
             <div className="bg-white rounded-lg shadow-md px-2">
-              <TransactionList onItemClick={handleItemClick} />
+              <TransactionList onItemClick={handleItemClick} page={page} />
             </div>
           </div>
         </Box>

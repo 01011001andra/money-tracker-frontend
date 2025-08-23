@@ -1,3 +1,5 @@
+import type { Icon } from "./icon";
+
 export type Transaction = {
   id?: string;
   title: string;
@@ -10,4 +12,5 @@ export type Transaction = {
     name: string;
   };
   categoryId?: string;
+  icon?: Icon;
 };

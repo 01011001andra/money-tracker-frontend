@@ -11,30 +11,48 @@ import {
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { formatIDR } from "@/utils/helper/helper";
-import { useGetTransaction } from "@/hooks/transaction/useGetTransaction";
+// import { useGetTransaction } from "@/hooks/transaction/useGetTransaction";
 import type { Transaction } from "@/types/transaction";
+import { useInfiniteTransactions } from "@/hooks/transaction/useGetTransactionInfinity";
 
 type TransactionListProps = {
   showChevron?: boolean;
   dense?: boolean;
   onItemClick?: (item: Transaction) => void;
-  page: number;
 };
 
 const TransactionList: React.FC<TransactionListProps> = ({
   showChevron = true,
   dense = false,
   onItemClick,
-  page,
 }) => {
-  const { data } = useGetTransaction(null, {
-    page: String(page),
-  });
-  const list = (data?.data as Transaction[]) ?? [];
+  // const { data, refetch } = useGetTransaction();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+    useInfiniteTransactions({ limit: 5 }); // bisa kirim { year: 2025 }
 
+  // gabungkan semua halaman
+  const items = React.useMemo(
+    () => data?.pages.flatMap((p) => p.data ?? []) ?? [],
+    [data]
+  );
+
+  // sentinel untuk infinite scroll
+  const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    if (!loadMoreRef.current) return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    });
+    io.observe(loadMoreRef.current);
+    return () => io.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  if (status === "pending") return <div>Loading…</div>;
   return (
     <List sx={{ py: 0 }}>
-      {list?.map((item, idx) => (
+      {items?.map((item, idx) => (
         <Fragment key={item.id}>
           <ListItem
             disableGutters
@@ -56,15 +74,15 @@ const TransactionList: React.FC<TransactionListProps> = ({
                   sx={{
                     width: 40,
                     height: 40,
-                    bgcolor: item.icon?.style.backgroundColor,
-                    color: item.icon?.style.color,
+                    bgcolor: item?.icon?.style.backgroundColor,
+                    color: item?.icon?.style.color,
                     boxShadow: "inset 0 0 0 1px rgba(0,0,0,.06)",
                   }}
                 >
                   <Icon
-                    icon={item.icon?.name || ""}
-                    width={item.icon?.style.width}
-                    height={item.icon?.style.height}
+                    icon={item?.icon?.name || ""}
+                    width={item?.icon?.style.width}
+                    height={item?.icon?.style.height}
                   />
                 </Avatar>
               </ListItemAvatar>
@@ -107,11 +125,15 @@ const TransactionList: React.FC<TransactionListProps> = ({
             </Box>
           </ListItem>
 
-          {idx < list.length - 1 && (
+          {idx < items.length - 1 && (
             <Divider sx={{ borderColor: "divider", width: "100%" }} />
           )}
         </Fragment>
       ))}
+      <div ref={loadMoreRef} style={{ height: 1 }} />
+
+      {isFetchingNextPage && <div>Loading more…</div>}
+      {!hasNextPage && <div className="text-muted">Sudah sampai akhir</div>}
     </List>
   );
 };

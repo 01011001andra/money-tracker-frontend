@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { isAxiosError } from "axios";
+import type { Meta } from "@/types/http-resource";
 
 export const formatIDR = (v: number | "" | null | undefined) =>
   v === "" || v == null
@@ -100,4 +101,12 @@ export function getApiErrorMessage(error: unknown): string {
 
   // Non-Axios error
   return error instanceof Error ? error.message : "Terjadi kesalahan.";
+}
+
+export function getNextParam(meta: Meta) {
+  const { page, totalPages, limit } = meta ?? {};
+  if (!meta || typeof page !== "number" || typeof totalPages !== "number")
+    return undefined;
+  if (page < totalPages) return { page: page + 1, limit };
+  return undefined; // sudah mentok
 }

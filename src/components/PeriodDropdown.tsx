@@ -9,16 +9,21 @@ import {
 import { Icon } from "@iconify/react";
 import useRouter from "@/hooks/apps/useRouter";
 
-export type PeriodKey = "day" | "week" | "month" | "year";
+export type PeriodKey = "all" | "day" | "week" | "month" | "year";
 
 const LABELS: Record<PeriodKey, string> = {
+  all: "All",
   day: "Today",
   week: "This week",
   month: "This month",
   year: "This year",
 };
 
-export default function PeriodDropdown() {
+export default function PeriodDropdown({
+  setPage,
+}: {
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+}) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const router = useRouter();
@@ -27,6 +32,7 @@ export default function PeriodDropdown() {
   const handleSelect = (v: PeriodKey) => {
     router.setQuery((prev) => ({ ...prev, filter: v }), { replace: true });
     setAnchorEl(null);
+    setPage(1);
   };
 
   return (
@@ -57,6 +63,7 @@ export default function PeriodDropdown() {
       >
         {(
           [
+            { key: "all", icon: "mdi:calendar-today" },
             { key: "day", icon: "mdi:calendar-today" },
             { key: "week", icon: "mdi:calendar-week" },
             { key: "month", icon: "mdi:calendar-month" },

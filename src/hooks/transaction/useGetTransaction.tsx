@@ -6,37 +6,61 @@ import type { Transaction } from "@/types/transaction";
 import { key } from "./keys";
 import useRouter from "../apps/useRouter";
 
-export function useGetTransaction(id?: string, opts?: { enabled?: boolean }) {
+type UseGetTxOpts = {
+  enabled?: boolean;
+  page?: string; // mempertahankan bentukmu
+};
+
+export function useGetTransaction(id?: string | null, opts: UseGetTxOpts = {}) {
   const qc = useQueryClient();
   const router = useRouter();
-  const filterQuery = router.query.filter;
-  const filter =
-    filterQuery == "day"
-      ? "filter=day"
-      : filterQuery == "week"
-      ? "filter=week"
-      : filterQuery == "month"
-      ? "filter=month"
-      : filterQuery == "year"
-      ? "filter=year"
-      : "";
+
+  const filterQuery = router.query.filter as
+    | "all"
+    | "day"
+    | "week"
+    | "month"
+    | "year"
+    | undefined;
+  const tabQuery = router.query.tab as "all" | "income" | "expense";
+
+  const page = opts.page ?? "1";
+  const limit = "10";
+
+  const qs = new URLSearchParams();
+  qs.set("page", page);
+  qs.set("limit", limit);
+
+  if (filterQuery && filterQuery !== "all") {
+    qs.set("filter", filterQuery);
+  }
+
+  if (tabQuery && tabQuery !== "all") {
+    qs.set("type", tabQuery);
+  }
+
   const q = useQuery({
-    queryKey: key.transaction(id),
+    queryKey: id
+      ? key.transaction(id)
+      : [...key.transaction(), filterQuery ?? "all", page, tabQuery ?? null],
     queryFn: async () => {
-      const url = id ? `/transaction/${id}` : `/transaction?${filter}`;
+      const url = id ? `/transaction/${id}` : `/transaction?${qs.toString()}`;
       const { data } = await api.get<ResponseType<Transaction | Transaction[]>>(
         url
       );
       return data;
     },
-    // default behavior:
-    // - tanpa id: enabled true (langsung fetch list)
-    // - dengan id: enabled false (biar kamu kontrol kapan fetch-nya siap)
-    enabled: opts?.enabled ?? (!id ? true : false),
+    enabled: opts.enabled ?? (!id ? true : false),
   });
 
-  const resetTransaction = () =>
-    qc.resetQueries({ queryKey: key.transaction(id), exact: true });
+  const resetTransaction = () => {
+    if (id) {
+      qc.resetQueries({ queryKey: key.transaction(id), exact: true });
+    } else {
+      // reset seluruh list yang terkait (opsional tapi berguna)
+      qc.resetQueries({ queryKey: key.transaction(), exact: false });
+    }
+  };
 
   return { ...q, resetTransaction };
 }

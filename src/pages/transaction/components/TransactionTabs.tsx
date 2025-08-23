@@ -1,14 +1,36 @@
 import useRouter from "@/hooks/apps/useRouter";
 import { ToggleButtonGroup, ToggleButton } from "@mui/material";
+import type React from "react";
 
-const TransactionTabs: React.FC = () => {
+type TransactionTabsProps = {
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  setTabs: React.Dispatch<
+    React.SetStateAction<"income" | "expense" | undefined>
+  >;
+  tabs: "income" | "expense" | undefined;
+};
+
+const TransactionTabs: React.FC<TransactionTabsProps> = ({
+  setPage,
+  setTabs,
+}) => {
   const router = useRouter();
 
+  const handleChangeTab = (v: "all" | "income" | "expense") => {
+    router.setQuery((prev) => ({ ...prev, tab: v }));
+    if (v !== "all") {
+      setTabs(v);
+    } else {
+      setTabs(undefined);
+    }
+    setPage(1);
+  };
   return (
     <ToggleButtonGroup
       value={router.query.tab}
       exclusive
-      onChange={(_, v) => router.setQuery((prev) => ({ ...prev, tab: v }))}
+      onChange={(_, v) => handleChangeTab(v)}
       color="primary"
       className="bg-primary-100 w-full "
       sx={{
