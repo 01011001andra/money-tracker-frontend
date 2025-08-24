@@ -5,12 +5,15 @@ import type { Icon } from "./icon";
 export type Dashboard = {
   banner: {
     title: string;
-    balances: { name: string; amount: number }[];
-    footer: {
-      type: "high" | "low";
-      percentAge: number;
-      label: string;
-    };
+    balances: {
+      name: string;
+      amount: number;
+      totalTransaction: {
+        income: number;
+        expense: number;
+        message: { color: string; icon: string; text: string; type: string };
+      };
+    }[];
   };
   activity: {
     id: string;

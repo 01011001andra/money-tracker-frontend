@@ -18,6 +18,11 @@ const Banner = () => {
   const { data, isLoading } = useGetDashboard();
   const [select, setSelect] = React.useState<number>(0);
   const amount = data?.data?.banner?.balances[select].amount || 0;
+  const footer = {
+    income: data?.data?.banner?.balances[select].totalTransaction.income || 0,
+    expense: data?.data?.banner?.balances[select].totalTransaction.expense || 0,
+    message: data?.data?.banner?.balances[select].totalTransaction.message,
+  };
 
   const onDetail = () => {
     router.push("/report");
@@ -112,28 +117,42 @@ const Banner = () => {
           </div>
 
           {/* trend */}
-          <div className="relative z-10 mt-3 inline-flex items-center gap-2">
-            <span
-              className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold ring-1 ring-inset
+          <div className="flex flex-col gap-2">
+            <div className="relative z-10 mt-3 inline-flex items-center gap-2">
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold ring-1 ring-inset
             ${
-              data?.data?.banner?.footer?.type == "high"
+              footer.income !== 0
                 ? "bg-emerald-500/15 text-emerald-300 ring-emerald-400/20"
-                : "bg-rose-500/15 text-rose-300 ring-rose-400/20"
+                : "bg-gray-500/15 text-gray-300 ring-gray-400/20"
             }`}
-            >
-              <Icon
-                icon={
-                  data?.data?.banner?.footer?.type == "high"
-                    ? "iconamoon:arrow-top-right-1-bold"
-                    : "iconamoon:arrow-down-left-1-bold"
+              >
+                <Icon icon={"solar:course-up-bold"} fontSize={14} />
+                {footer.income}
+              </span>
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold ring-1 ring-inset
+                ${
+                  footer.expense !== 0
+                    ? "bg-rose-500/15 text-rose-300 ring-rose-400/20"
+                    : "bg-gray-500/15 text-gray-300 ring-gray-400/20"
                 }
-                fontSize={14}
-              />
-              {data?.data?.banner?.footer?.percentAge}%
-            </span>
-            <span className="text-xs text-white/80">
-              {data?.data?.banner?.footer.label}
-            </span>
+                `}
+              >
+                <Icon icon={"solar:course-down-bold"} fontSize={14} />
+                {footer.expense}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center mt-3 gap-1">
+            <Icon
+              icon={footer.message?.icon || "mdi:information-outline"}
+              color={footer.message?.color}
+              fontSize={24}
+            />
+            <small className="font-medium flex-1 text-[10px]">
+              {footer.message?.text}
+            </small>
           </div>
         </div>
       )}
