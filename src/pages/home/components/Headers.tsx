@@ -14,6 +14,9 @@ import Box from "@mui/material/Box";
 import { Icon } from "@iconify/react";
 import useRouter from "@/hooks/apps/useRouter";
 import { useUserStore } from "@/stores/user";
+import { useAppStore } from "@/stores/app";
+import { useInitQuery } from "@/hooks/auth/useInit";
+import SkeletonLoader from "@/components/SkeletonLoader";
 
 type NotifType = "success" | "warning" | "info";
 
@@ -62,6 +65,8 @@ const Headers = () => {
     },
   ]);
 
+  // hooks
+  const { isLoading } = useInitQuery();
   const open = Boolean(anchorEl);
   const router = useRouter();
   const { user } = useUserStore();
@@ -87,25 +92,31 @@ const Headers = () => {
     );
 
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center w-full">
       {/* Avatar + Greeting */}
-      <div className="flex gap-4 items-center ">
-        <Avatar
-          onClick={goSetting}
-          alt="Static Avatar"
-          src={
-            user?.image ||
-            `https://api.dicebear.com/9.x/dylan/svg?seed=${user?.id}`
-          }
-          sx={{ width: 40, height: 40, cursor: "pointer" }}
-        />
-        <div className="flex flex-col">
-          <span className="font-bold text-sm">Hi, {user?.name}!</span>
-          <span className="text-xs text-gray-400">
-            Lacak uang anda dengan mudah
-          </span>
+      {isLoading ? (
+        <div className="h-12 w-full">
+          <SkeletonLoader type="listWithImage" length={1} />
         </div>
-      </div>
+      ) : (
+        <div className="flex gap-4 items-center ">
+          <Avatar
+            onClick={goSetting}
+            alt="Static Avatar"
+            src={
+              user?.image ||
+              `https://api.dicebear.com/9.x/dylan/svg?seed=${user?.id}`
+            }
+            sx={{ width: 40, height: 40, cursor: "pointer" }}
+          />
+          <div className="flex flex-col  w-full">
+            <span className="font-bold text-sm">Hi, {user?.name}!</span>
+            <span className="text-xs text-gray-400">
+              Lacak uang anda dengan mudah
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Icon Notifikasi + Badge (Iconify) */}
       <Badge

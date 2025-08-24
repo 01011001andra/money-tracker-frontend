@@ -57,7 +57,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type, length }) => {
             <Box key={i} display="flex" gap={2} alignItems="center">
               <Skeleton variant="circular" width={48} height={48} />
               <Box flex={1}>
-                <Skeleton variant="text" />
+                <Skeleton variant="text" width="80%" />
                 <Skeleton variant="text" width="60%" />
               </Box>
             </Box>

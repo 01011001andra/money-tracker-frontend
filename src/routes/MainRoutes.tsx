@@ -2,7 +2,13 @@ import { lazy } from "react";
 import Loadable from "@/components/Loadable";
 import NavigationLayout from "@/layouts/NavigationLayout";
 
-// render - home
+// render
+// import Home from "@/pages/home";
+// import TransactionPage from "@/pages/transaction";
+// import Report from "@/pages/report";
+// import Setting from "@/pages/setting";
+
+// render - lazy
 const Home = Loadable(lazy(() => import("@/pages/home/index")));
 const TransactionPage = Loadable(
   lazy(() => import("@/pages/transaction/index"))

@@ -8,24 +8,23 @@ import {
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { formatIDR } from "@/utils/helper/helper";
-import type { Transaction } from "@/types/transaction";
 import dayjs from "dayjs";
 import useRouter from "@/hooks/apps/useRouter";
 import { useDeleteTr } from "@/hooks/transaction/useDeleteTr";
+import { useAppStore } from "@/stores/app";
 
 type Props = {
   open: boolean;
   onOpen: () => void;
   onClose: () => void;
-  item?: Transaction | null;
 };
 
 export default function TransactionDetailsDrawer({
   open,
   onOpen,
   onClose,
-  item,
 }: Props) {
+  const { selectedData: item } = useAppStore();
   const mutation = useDeleteTr();
   const router = useRouter();
 

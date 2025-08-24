@@ -59,7 +59,7 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
   closeSelf,
 }) => {
   // hooks
-  const { loadingAction } = useAppStore();
+  const { loadingAction, setSelectedData } = useAppStore();
   const router = useRouter();
   const transactionId = router.query.id;
   const { refetch, isRefetching, data, resetCategory } = useGetCategory();
@@ -114,6 +114,15 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
       })
       .then((res) => {
         if (transactionId) {
+          setSelectedData({
+            type: res?.data.type,
+            amount: res?.data.amount,
+            title: res?.data.title,
+            categoryId: res?.data?.category?.name,
+            transactionDate: res?.data.transactionDate,
+            note: res?.data.note,
+            id: res?.data.id,
+          });
           reset({
             type: res?.data.type,
             amount: res?.data.amount,

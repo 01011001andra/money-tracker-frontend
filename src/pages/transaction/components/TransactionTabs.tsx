@@ -6,11 +6,12 @@ import type React from "react";
 type TransactionTabsProps = {
   actualPage: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  setActualPage: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const TransactionTabs: React.FC<TransactionTabsProps> = ({
   setPage,
-  // actualPage,
+  setActualPage,
 }) => {
   const router = useRouter();
   // const { data } = useGetTransaction(null, {
@@ -23,6 +24,7 @@ const TransactionTabs: React.FC<TransactionTabsProps> = ({
     router.setQuery((prev) => ({ ...prev, tab: v }));
 
     setPage(1);
+    setActualPage(1);
   };
   return (
     <ToggleButtonGroup

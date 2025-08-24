@@ -16,6 +16,8 @@ import { Icon } from "@iconify/react";
 import { useUserStore } from "@/stores/user";
 import useRouter from "@/hooks/apps/useRouter";
 import { useLogoutMutation } from "@/hooks/auth/useLogout";
+import { useAppStore } from "@/stores/app";
+import { useInitQuery } from "@/hooks/auth/useInit";
 
 type RowButtonItem = {
   icon: string;
@@ -130,6 +132,8 @@ export default function Setting() {
   const { user } = useUserStore();
   const router = useRouter();
   const logout = useLogoutMutation();
+  const { isLoading } = useInitQuery();
+  const { loadingAction } = useAppStore();
 
   // actions
   const handleLogout = async () => {
@@ -149,6 +153,9 @@ export default function Setting() {
     },
   ];
 
+  React.useEffect(() => {
+    loadingAction({ open: isLoading, text: "Please wait..." });
+  }, [isLoading]);
   return (
     <Box className="w-full" sx={{ p: 2 }}>
       {/* Header */}

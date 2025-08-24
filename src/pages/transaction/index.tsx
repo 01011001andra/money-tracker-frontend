@@ -10,6 +10,7 @@ import TransactionList from "./components/TransactionList";
 import { useGetTransaction } from "@/hooks/transaction/useGetTransaction";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import { useDebounce } from "react-use";
+import { useAppStore } from "@/stores/app";
 
 const TransactionPage = () => {
   // states
@@ -17,9 +18,9 @@ const TransactionPage = () => {
   const [actualPage, setActualPage] = React.useState(1);
 
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<Transaction | null>(null);
 
   // hooks
+  const { setSelectedData } = useAppStore();
   const router = useRouter();
   const { data, isFetching, isLoading } = useGetTransaction(null, {
     enabled: false,
@@ -27,6 +28,8 @@ const TransactionPage = () => {
   });
   const dataList = data?.data as Transaction[];
   const isSkeleton = isFetching || isLoading;
+  const cantPrevious = page == 1;
+  const cantNext = data?.meta && page >= data?.meta?.totalPages;
 
   useDebounce(
     () => {
@@ -37,7 +40,7 @@ const TransactionPage = () => {
   );
 
   const handleItemClick = (item: Transaction) => {
-    setSelected(item);
+    setSelectedData(item);
     setOpen(true);
   };
 
@@ -45,11 +48,11 @@ const TransactionPage = () => {
     if (!data?.meta) return;
 
     if (type == "previous") {
-      if (page <= 1) return;
+      if (cantPrevious) return;
       setPage((prev) => prev - 1);
     }
     if (type == "next") {
-      if (page >= data?.meta.totalPages) return;
+      if (cantNext) return;
       setPage((prev) => prev + 1);
     }
   };
@@ -77,7 +80,11 @@ const TransactionPage = () => {
           Transaksi
         </h1>
 
-        <TransactionTabs actualPage={actualPage} setPage={setPage} />
+        <TransactionTabs
+          actualPage={actualPage}
+          setPage={setPage}
+          setActualPage={setActualPage}
+        />
 
         <Box>
           <div className="flex flex-col gap-2">
@@ -98,7 +105,9 @@ const TransactionPage = () => {
                   onClick={() => {
                     handlePaginate("previous");
                   }}
-                  className="bg-primary text-white"
+                  className={`${
+                    cantPrevious ? "bg-gray-400" : "bg-primary"
+                  } text-white`}
                 >
                   <Icon icon={"ooui:next-rtl"} fontSize={12} />
                 </IconButton>
@@ -107,7 +116,9 @@ const TransactionPage = () => {
                   onClick={() => {
                     handlePaginate("next");
                   }}
-                  className="bg-primary text-white"
+                  className={`${
+                    cantNext ? "bg-gray-400" : "bg-primary"
+                  } text-white`}
                 >
                   <Icon icon={"ooui:next-ltr"} fontSize={12} />
                 </IconButton>
@@ -137,7 +148,6 @@ const TransactionPage = () => {
           open={open}
           onOpen={() => setOpen(true)}
           onClose={() => setOpen(false)}
-          item={selected}
         />
       </div>
     </div>
