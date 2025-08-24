@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 
 type SkeletonLoaderProps = {
-  type: "list" | "table" | "image" | "listWithImage";
+  type: "list" | "table" | "image" | "listWithImage" | "avatar" | "banner";
   length?: number;
 };
 
@@ -49,6 +49,23 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ type, length }) => {
           <Skeleton variant="text" width="40%" />
         </Box>
       );
+
+    case "banner":
+      return (
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Skeleton variant="rounded" width="100%" height={140} />
+        </Box>
+      );
+
+    case "avatar":
+      return <Skeleton variant="circular" width={40} height={40} />;
 
     case "listWithImage":
       return (

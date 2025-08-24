@@ -28,7 +28,7 @@ const TransactionTabs: React.FC<TransactionTabsProps> = ({
   };
   return (
     <ToggleButtonGroup
-      value={router.query.tab}
+      value={router.query.tab || "all"}
       exclusive
       onChange={(_, v) => handleChangeTab(v)}
       color="primary"

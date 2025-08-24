@@ -16,65 +16,24 @@ import useRouter from "@/hooks/apps/useRouter";
 import { useUserStore } from "@/stores/user";
 import { useInitQuery } from "@/hooks/auth/useInit";
 import SkeletonLoader from "@/components/SkeletonLoader";
-
-type NotifType = "success" | "warning" | "info";
-
-interface Notif {
-  id: number;
-  text: string;
-  time: string;
-  type: NotifType;
-  read?: boolean;
-}
-
-const iconStyleByType: Record<
-  NotifType,
-  { bg: string; text: string; icon: string }
-> = {
-  success: {
-    bg: "bg-green-100",
-    text: "text-green-600",
-    icon: "solar:check-circle-bold",
-  },
-  warning: {
-    bg: "bg-amber-100",
-    text: "text-amber-600",
-    icon: "solar:warning-circle-bold",
-  },
-  info: { bg: "bg-blue-100", text: "text-blue-600", icon: "solar:bell-bold" },
-};
+import { useGetDashboard } from "@/hooks/bff/useGetDashboard";
 
 const Headers = () => {
   // states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [notifications, setNotifications] = useState<Notif[]>([
-    {
-      id: 1,
-      text: "Transaksi baru berhasil ditambahkan",
-      time: "Baru saja",
-      type: "success",
-      read: false,
-    },
-    {
-      id: 3,
-      text: "Laporan keuangan mingguan tersedia",
-      time: "Kemarin",
-      type: "info",
-      read: true,
-    },
-  ]);
 
   // hooks
   const { isLoading } = useInitQuery();
   const open = Boolean(anchorEl);
   const router = useRouter();
   const { user } = useUserStore();
+  const { data, isLoading: dashboardLoading } = useGetDashboard();
 
   // actions
   const goSetting = () => router.push("/setting");
   const unreadCount = useMemo(
-    () => notifications.filter((n) => !n.read).length,
-    [notifications]
+    () => data?.data?.notification?.details?.filter((n) => !n.read).length,
+    [data?.data?.notification?.details]
   );
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -82,13 +41,9 @@ const Headers = () => {
   };
   const handleClose = () => setAnchorEl(null);
 
-  const markAllRead = () =>
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-
-  const markOneRead = (id: number) =>
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const markAllRead = () => {
+    console.log("clicked");
+  };
 
   return (
     <div className="flex justify-between items-center w-full">
@@ -117,137 +72,144 @@ const Headers = () => {
         </div>
       )}
 
-      {/* Icon Notifikasi + Badge (Iconify) */}
-      <Badge
-        color="error"
-        badgeContent={unreadCount}
-        invisible={unreadCount === 0}
-        overlap="circular"
-      >
-        <IconButton
-          onClick={handleClick}
-          aria-controls={open ? "notif-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          className="bg-white drop-shadow-2xl"
-        >
-          <Icon
-            icon={"material-symbols:notifications-outline"}
-            width={24}
-            height={24}
-            className="text-black"
-          />
-        </IconButton>
-      </Badge>
-
-      {/* Menu Notifikasi */}
-      <Menu
-        id="notif-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          sx: {
-            width: 320,
-            borderRadius: 2,
-            overflow: "hidden",
-            boxShadow: 6,
-          },
-        }}
-      >
-        {/* Header */}
-        <Box className="flex items-center justify-between px-3 pb-2">
-          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-            Notifikasi
-          </Typography>
-          <div className="flex gap-2">
-            <Button
-              size="small"
-              onClick={markAllRead}
-              disabled={unreadCount === 0}
+      {dashboardLoading ? (
+        <SkeletonLoader type="avatar" />
+      ) : (
+        <>
+          {/* Icon Notifikasi + Badge (Iconify) */}
+          <Badge
+            color="error"
+            badgeContent={unreadCount}
+            invisible={unreadCount === 0}
+            overlap="circular"
+          >
+            <IconButton
+              onClick={handleClick}
+              aria-controls={open ? "notif-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              className="bg-white drop-shadow-2xl"
             >
-              Tandai terbaca
-            </Button>
-          </div>
-        </Box>
-        <Divider />
+              <Icon
+                icon={"material-symbols:notifications-outline"}
+                width={24}
+                height={24}
+                className="text-black"
+              />
+            </IconButton>
+          </Badge>
 
-        {/* List */}
-        {notifications.length > 0 ? (
-          <List
-            sx={{
-              maxHeight: 360,
-              overflowY: "auto",
-              py: 0,
+          {/* Menu Notifikasi */}
+          <Menu
+            id="notif-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              sx: {
+                width: 320,
+                borderRadius: 2,
+                overflow: "hidden",
+                boxShadow: 6,
+              },
             }}
           >
-            {notifications.map((n) => {
-              const style = iconStyleByType[n.type];
-              return (
-                <ListItemButton
-                  key={n.id}
-                  onClick={() => {
-                    markOneRead(n.id);
-                    handleClose();
-                  }}
-                  sx={{
-                    gap: 1,
-                    ...(n.read ? {} : { backgroundColor: "action.hover" }),
-                  }}
+            {/* Header */}
+            <Box className="flex items-center justify-between px-3 pb-2">
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                {data?.data.notification.title}
+              </Typography>
+              <div className="flex gap-2">
+                <Button
+                  size="small"
+                  onClick={markAllRead}
+                  disabled={unreadCount === 0}
                 >
-                  <ListItemAvatar>
-                    <span
-                      className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${style.bg} ${style.text}`}
-                    >
-                      <Icon icon={style.icon} width={20} height={20} />
-                    </span>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={
-                      <span
-                        className={`text-sm ${
-                          n.read
-                            ? "text-gray-700"
-                            : "font-semibold text-gray-900"
-                        }`}
-                      >
-                        {n.text}
-                      </span>
-                    }
-                    secondary={
-                      <span className="text-xs text-gray-500">{n.time}</span>
-                    }
-                  />
-                  {!n.read && (
-                    <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
-                  )}
-                </ListItemButton>
-              );
-            })}
-          </List>
-        ) : (
-          // Empty state
-          <Box className="flex flex-col items-center justify-center py-10">
-            <Icon
-              icon="solar:bell-off-outline"
-              width={36}
-              height={36}
-              className="text-gray-400"
-            />
-            <Typography variant="body2" className="text-gray-500 mt-2">
-              Tidak ada notifikasi
-            </Typography>
-          </Box>
-        )}
+                  Tandai terbaca
+                </Button>
+              </div>
+            </Box>
+            <Divider />
 
-        <Divider />
-        {/* Footer */}
-        <Box className="px-3 pt-2">
-          <Button fullWidth variant="text" onClick={handleClose}>
-            Lihat semua
-          </Button>
-        </Box>
-      </Menu>
+            {/* List */}
+            {data && data?.data?.notification?.details?.length > 0 ? (
+              <List
+                sx={{
+                  maxHeight: 360,
+                  overflowY: "auto",
+                  py: 0,
+                }}
+              >
+                {data?.data?.notification?.details?.map((n) => {
+                  return (
+                    <ListItemButton
+                      key={n.id}
+                      onClick={() => {
+                        handleClose();
+                      }}
+                      sx={{
+                        gap: 1,
+                        ...(n.read ? {} : { backgroundColor: "action.hover" }),
+                      }}
+                    >
+                      <ListItemAvatar>
+                        icon
+                        {/* <span
+                          className={`inline-flex h-9 w-9 items-center justify-center rounded-full ${style.bg} ${style.text}`}
+                        >
+                          <Icon icon={style.icon} width={20} height={20} />
+                        </span> */}
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          <span
+                            className={`text-sm ${
+                              n.read
+                                ? "text-gray-700"
+                                : "font-semibold text-gray-900"
+                            }`}
+                          >
+                            {n.title}
+                          </span>
+                        }
+                        secondary={
+                          <span className="text-xs text-gray-500">
+                            {n.createdAt}
+                          </span>
+                        }
+                      />
+                      {!n.read && (
+                        <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
+                      )}
+                    </ListItemButton>
+                  );
+                })}
+              </List>
+            ) : (
+              // Empty state
+              <Box className="flex flex-col items-center justify-center py-10">
+                <Icon
+                  icon="solar:bell-off-outline"
+                  width={36}
+                  height={36}
+                  className="text-gray-400"
+                />
+                <Typography variant="body2" className="text-gray-500 mt-2">
+                  Tidak ada notifikasi
+                </Typography>
+              </Box>
+            )}
+
+            <Divider />
+            {/* Footer */}
+            <Box className="px-3 pt-2">
+              <Button fullWidth variant="text" onClick={handleClose}>
+                Lihat semua
+              </Button>
+            </Box>
+          </Menu>
+        </>
+      )}
     </div>
   );
 };

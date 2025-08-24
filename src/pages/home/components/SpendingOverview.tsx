@@ -1,3 +1,6 @@
+import SkeletonLoader from "@/components/SkeletonLoader";
+import useRouter from "@/hooks/apps/useRouter";
+import { useGetDashboard } from "@/hooks/bff/useGetDashboard";
 import {
   Box,
   Card,
@@ -17,12 +20,8 @@ const formatIDR = (n: number) =>
 type StatProps = {
   title: string;
   amount: number;
-  changePct: number; // negatif = turun
   progress?: number; // 0..100
   progressLabel?: string; // mis. "of target" / "of budget"
-  icon: string;
-  iconBg: string; // hex / rgb / tailwind var -> dipakai ke sx.bgcolor
-  iconColor: string;
 };
 
 function StatCard({ title, amount, progress, progressLabel }: StatProps) {
@@ -33,7 +32,7 @@ function StatCard({ title, amount, progress, progressLabel }: StatProps) {
           <Typography
             variant="caption"
             color="text.secondary"
-            className="text-xs"
+            className="text-xs capitalize"
           >
             {title}
           </Typography>
@@ -73,6 +72,9 @@ function StatCard({ title, amount, progress, progressLabel }: StatProps) {
 }
 
 export default function SpendingOverview() {
+  const { data, isLoading } = useGetDashboard();
+  const router = useRouter();
+
   return (
     <div className="flex flex-col gap-3">
       {/* Header */}
@@ -82,29 +84,32 @@ export default function SpendingOverview() {
         </Typography>
       </Box>
 
-      {/* Cards */}
-      <div className="grid grid-cols-2 gap-2">
-        <StatCard
-          title="Monthly income"
-          amount={23000000}
-          changePct={12.4}
-          progress={78}
-          progressLabel="of target"
-          icon="solar:wallet-money-bold-duotone"
-          iconBg="#EDE9FE" // ungu soft
-          iconColor="#7C3AED"
-        />
-        <StatCard
-          title="Monthly expense"
-          amount={12500000}
-          changePct={-5.2}
-          progress={62}
-          progressLabel="of budget used"
-          icon="solar:cart-3-bold-duotone"
-          iconBg="#FEE2E2" // merah soft
-          iconColor="#E11D48"
-        />
-      </div>
+      {isLoading ? (
+        <div className="flex gap-2">
+          <SkeletonLoader type="banner" />
+          <SkeletonLoader type="banner" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          {data?.data?.spendingOverview?.map((item) => {
+            return (
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  router.push("/report");
+                }}
+              >
+                <StatCard
+                  title={item.name}
+                  amount={item.total}
+                  progress={item.progress}
+                  progressLabel={item.label}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

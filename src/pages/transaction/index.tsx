@@ -61,11 +61,11 @@ const TransactionPage = () => {
     router.setQuery({ sheet: "transaction-action" });
   };
 
-  React.useEffect(() => {
-    if (!router.query.tab && !router.query.filter) {
-      router.push("/transaction?tab=all&filter=all");
-    }
-  }, [router]);
+  // React.useEffect(() => {
+  //   if (!router.query.tab && !router.query.filter) {
+  //     // router.push("/transaction?tab=all&filter=all");
+  //   }
+  // }, [router]);
 
   return (
     <div className="relative max-w-xl w-full h-full">
