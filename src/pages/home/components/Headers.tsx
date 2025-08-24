@@ -14,7 +14,6 @@ import Box from "@mui/material/Box";
 import { Icon } from "@iconify/react";
 import useRouter from "@/hooks/apps/useRouter";
 import { useUserStore } from "@/stores/user";
-import { useAppStore } from "@/stores/app";
 import { useInitQuery } from "@/hooks/auth/useInit";
 import SkeletonLoader from "@/components/SkeletonLoader";
 
