@@ -1,5 +1,5 @@
 import * as React from "react";
-import { formatIDR } from "@/utils/helper/helper";
+import { formatIDR, truncate } from "@/utils/helper/helper";
 import { Icon } from "@iconify/react";
 import {
   List,
@@ -77,14 +77,12 @@ export default function ActivityCard() {
                           <ListItemText
                             sx={{ margin: 0 }}
                             primary={
-                              <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center justify-between gap-2 flex-1">
                                 <span className="font-bold text-xs break-words w-full line-clamp-2">
                                   {it.title}
                                 </span>
                                 <Box
                                   display="flex"
-                                  gap={0.9}
-                                  alignItems="center"
                                   sx={{ color: "text.secondary" }}
                                 >
                                   <Box
@@ -97,8 +95,8 @@ export default function ActivityCard() {
                                       width={14}
                                       height={14}
                                     />
-                                    <span className="text-xs truncate max-w-[55px]">
-                                      {it.category.name}
+                                    <span className="text-xs w-full truncate">
+                                      {truncate(it.category.name, 20)}
                                     </span>
                                   </Box>
                                 </Box>
@@ -117,7 +115,7 @@ export default function ActivityCard() {
                                   whiteSpace: "nowrap",
                                 }}
                               >
-                                Rp. {it.type == "EXPENSE" && "- "}
+                                {it.type == "EXPENSE" && "- "} Rp.
                                 {formatIDR(it.amount)}
                               </Typography>
                             }

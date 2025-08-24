@@ -110,3 +110,7 @@ export function getNextParam(meta: Meta) {
   if (page < totalPages) return { page: page + 1, limit };
   return undefined; // sudah mentok
 }
+
+export function truncate(str: string, max = 25) {
+  return str.length > max ? str.slice(0, max) + "..." : str;
+}

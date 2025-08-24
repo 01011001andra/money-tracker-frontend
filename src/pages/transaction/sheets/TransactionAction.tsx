@@ -74,9 +74,9 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
 
   const { user } = useUserStore();
   const dynamicType =
-    router.query.tab.toUpperCase() == "ALL"
+    router.query?.tab?.toUpperCase() == "ALL"
       ? ""
-      : router.query.tab.toUpperCase();
+      : router.query?.tab?.toUpperCase();
 
   const {
     watch,

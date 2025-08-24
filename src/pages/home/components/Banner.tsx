@@ -1,7 +1,9 @@
+import * as React from "react";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import useRouter from "@/hooks/apps/useRouter";
 import { useGetDashboard } from "@/hooks/bff/useGetDashboard";
 import { Icon } from "@iconify/react";
+import { FormControl, MenuItem, Select } from "@mui/material";
 
 const formatIDR = (n: number) =>
   new Intl.NumberFormat("id-ID", {
@@ -14,6 +16,8 @@ const Banner = () => {
   // hooks
   const router = useRouter();
   const { data, isLoading } = useGetDashboard();
+  const [select, setSelect] = React.useState<number>(0);
+  const amount = data?.data?.banner?.balances[select].amount || 0;
 
   const onDetail = () => {
     router.push("/report");
@@ -37,9 +41,55 @@ const Banner = () => {
 
           {/* header */}
           <div className="relative z-10 flex items-center justify-between">
-            <span className="text-xs font-medium/relaxed text-white/90">
+            <FormControl variant="standard" className="w-fit" size="small">
+              <Select
+                labelId="demo-simple-select-standard-label"
+                id="demo-simple-select-standard"
+                value={select}
+                defaultValue={select}
+                sx={{
+                  color: "white",
+                  "& .MuiSvgIcon-root": { color: "white" },
+                  "&:before": { borderBottom: "none" },
+                  "&:after": { borderBottom: "none" },
+                  "&:hover:not(.Mui-disabled):before": {
+                    borderBottom: "none",
+                  },
+                  "& .MuiInputBase-input": { color: "white" },
+                  "& .MuiSelect-select": {
+                    mt: 0.1, // margin bottom 1 (theme spacing = 8px → 8px)
+                  },
+                }}
+                onChange={(e) => {
+                  setSelect(e.target.value);
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      "& .MuiMenuItem-root": {
+                        py: 1,
+                        px: 1.5,
+                        minHeight: "unset",
+                      },
+                    },
+                  },
+                }}
+              >
+                {data?.data?.banner?.balances?.map((balance, index) => {
+                  return (
+                    <MenuItem className="text-black " value={index}>
+                      <span className="text-xs font-medium/relaxed ">
+                        {balance.name}
+                      </span>
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+
+            {/* <span className="text-xs font-medium/relaxed text-white/90">
               {data?.data?.banner?.title}
-            </span>
+            </span> */}
 
             <button
               onClick={onDetail}
@@ -57,7 +107,7 @@ const Banner = () => {
           {/* amount */}
           <div className="relative z-10 mt-2">
             <div className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              {formatIDR(data?.data?.banner?.amount || 0)}
+              {formatIDR(amount || 0)}
             </div>
           </div>
 
@@ -66,23 +116,23 @@ const Banner = () => {
             <span
               className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold ring-1 ring-inset
             ${
-              data?.data?.banner?.balance?.type == "high"
+              data?.data?.banner?.footer?.type == "high"
                 ? "bg-emerald-500/15 text-emerald-300 ring-emerald-400/20"
                 : "bg-rose-500/15 text-rose-300 ring-rose-400/20"
             }`}
             >
               <Icon
                 icon={
-                  data?.data?.banner?.balance?.type == "high"
+                  data?.data?.banner?.footer?.type == "high"
                     ? "iconamoon:arrow-top-right-1-bold"
                     : "iconamoon:arrow-down-left-1-bold"
                 }
                 fontSize={14}
               />
-              {data?.data?.banner?.balance?.percentAge}%
+              {data?.data?.banner?.footer?.percentAge}%
             </span>
             <span className="text-xs text-white/80">
-              {data?.data?.banner?.balance.label}
+              {data?.data?.banner?.footer.label}
             </span>
           </div>
         </div>
