@@ -40,6 +40,7 @@ import {
 } from "@/types/apps/transaction-action";
 import { useGetTransaction } from "@/hooks/transaction/useGetTransaction";
 import { useCreateUpdateTr } from "@/hooks/transaction/useCreateUpdateTr";
+import { useAppStore } from "@/stores/app";
 
 const BOTTOM_BAR_SX = {
   pb: "env(safe-area-inset-bottom)",
@@ -58,14 +59,18 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
   closeSelf,
 }) => {
   // hooks
+  const { loadingAction } = useAppStore();
   const router = useRouter();
   const transactionId = router.query.id;
   const { refetch, isRefetching, data, resetCategory } = useGetCategory();
   const updateCreate = useCreateUpdateTr();
 
-  const { data: detailTransaction } = useGetTransaction(transactionId, {
-    enabled: !!transactionId,
-  });
+  const { data: detailTransaction, isLoading } = useGetTransaction(
+    transactionId,
+    {
+      enabled: !!transactionId,
+    }
+  );
 
   const { user } = useUserStore();
   const dynamicType =
@@ -144,6 +149,10 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
       note: detailTransaction?.data.note,
     });
   }, [detailTransaction?.data, reset]);
+
+  React.useEffect(() => {
+    loadingAction({ open: isLoading, text: "Please Wait..." });
+  }, [isLoading]);
   return (
     <div className="w-full h-full flex flex-col ">
       {/* Top App Bar */}

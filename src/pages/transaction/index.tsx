@@ -8,22 +8,33 @@ import type { Transaction } from "@/types/transaction";
 import PeriodDropdown from "@/components/PeriodDropdown";
 import TransactionList from "./components/TransactionList";
 import { useGetTransaction } from "@/hooks/transaction/useGetTransaction";
+import SkeletonLoader from "@/components/SkeletonLoader";
+import { useDebounce } from "react-use";
 
 const TransactionPage = () => {
   // states
   const [page, setPage] = React.useState(1);
-  const [tabs, setTabs] = React.useState<undefined | "income" | "expense">(
-    undefined
-  );
+  const [actualPage, setActualPage] = React.useState(1);
+
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<Transaction | null>(null);
 
   // hooks
   const router = useRouter();
-  const { data, refetch } = useGetTransaction(null, {
+  const { data, isFetching, isLoading } = useGetTransaction(null, {
     enabled: false,
-    page: String(page),
+    page: String(actualPage),
   });
+  const dataList = data?.data as Transaction[];
+  const isSkeleton = isFetching || isLoading;
+
+  useDebounce(
+    () => {
+      setActualPage(page);
+    },
+    1000,
+    [page]
+  );
 
   const handleItemClick = (item: Transaction) => {
     setSelected(item);
@@ -34,7 +45,7 @@ const TransactionPage = () => {
     if (!data?.meta) return;
 
     if (type == "previous") {
-      if (data?.meta?.page <= 1) return;
+      if (page <= 1) return;
       setPage((prev) => prev - 1);
     }
     if (type == "next") {
@@ -50,7 +61,6 @@ const TransactionPage = () => {
   React.useEffect(() => {
     if (!router.query.tab && !router.query.filter) {
       router.push("/transaction?tab=all&filter=all");
-      refetch();
     }
   }, [router]);
 
@@ -67,12 +77,7 @@ const TransactionPage = () => {
           Transaksi
         </h1>
 
-        <TransactionTabs
-          setTabs={setTabs}
-          page={page}
-          setPage={setPage}
-          tabs={tabs}
-        />
+        <TransactionTabs actualPage={actualPage} setPage={setPage} />
 
         <Box>
           <div className="flex flex-col gap-2">
@@ -109,9 +114,22 @@ const TransactionPage = () => {
               </Box>
               <PeriodDropdown setPage={setPage} />
             </Box>
-            <div className="bg-white rounded-lg shadow-md px-2">
-              <TransactionList onItemClick={handleItemClick} page={page} />
-            </div>
+            {isSkeleton ? (
+              <div className="px-2">
+                <SkeletonLoader type="listWithImage" length={10} />
+              </div>
+            ) : dataList?.length !== 0 ? (
+              <div className="bg-white rounded-lg shadow-md px-2">
+                <TransactionList
+                  onItemClick={handleItemClick}
+                  page={actualPage}
+                />
+              </div>
+            ) : (
+              <div className="flex items-center justify-center py-10">
+                <span>Transaction is empty</span>
+              </div>
+            )}
           </div>
         </Box>
 

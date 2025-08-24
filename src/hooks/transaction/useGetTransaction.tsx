@@ -51,6 +51,7 @@ export function useGetTransaction(id?: string | null, opts: UseGetTxOpts = {}) {
       return data;
     },
     enabled: opts.enabled ?? (!id ? true : false),
+    placeholderData: (prev) => prev,
   });
 
   const resetTransaction = () => {

@@ -1,29 +1,27 @@
 import useRouter from "@/hooks/apps/useRouter";
+// import { useGetTransaction } from "@/hooks/transaction/useGetTransaction";
 import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import type React from "react";
 
 type TransactionTabsProps = {
-  page: number;
+  actualPage: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
-  setTabs: React.Dispatch<
-    React.SetStateAction<"income" | "expense" | undefined>
-  >;
-  tabs: "income" | "expense" | undefined;
 };
 
 const TransactionTabs: React.FC<TransactionTabsProps> = ({
   setPage,
-  setTabs,
+  // actualPage,
 }) => {
   const router = useRouter();
+  // const { data } = useGetTransaction(null, {
+  //   enabled: false,
+  //   page: String(actualPage),
+  // });
 
   const handleChangeTab = (v: "all" | "income" | "expense") => {
+    if (!v) return;
     router.setQuery((prev) => ({ ...prev, tab: v }));
-    if (v !== "all") {
-      setTabs(v);
-    } else {
-      setTabs(undefined);
-    }
+
     setPage(1);
   };
   return (
@@ -54,13 +52,13 @@ const TransactionTabs: React.FC<TransactionTabsProps> = ({
       }}
     >
       <ToggleButton value="all" className="w-full">
-        Semua
+        ALL
       </ToggleButton>
       <ToggleButton value="income" className="w-full">
-        Pemasukan
+        INCOME
       </ToggleButton>
       <ToggleButton value="expense" className="w-full">
-        Pengeluaran
+        EXPENSE
       </ToggleButton>
     </ToggleButtonGroup>
   );

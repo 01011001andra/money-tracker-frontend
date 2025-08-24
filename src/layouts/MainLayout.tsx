@@ -5,6 +5,7 @@ import { useLocalStorageStore } from "@/stores/localStorage";
 import { useUserStore } from "@/stores/user";
 import * as React from "react";
 import { Outlet } from "react-router-dom";
+import PageLoader from "@/components/PageLoader";
 
 const MainLayout: React.FC<React.PropsWithChildren> = () => {
   const router = useRouter();
@@ -22,6 +23,7 @@ const MainLayout: React.FC<React.PropsWithChildren> = () => {
       <div className="flex-1 overflow-auto max-w-xl mx-auto w-full h-full overflow-y-auto relative">
         <Outlet />
         <GlobalSheets />
+        <PageLoader />
       </div>
     </div>
   );
