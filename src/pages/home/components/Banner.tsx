@@ -31,7 +31,7 @@ const Banner = () => {
   return (
     <>
       {isLoading ? (
-        <SkeletonLoader type="banner" length={5} />
+        <SkeletonLoader type="banner" />
       ) : (
         <div className="relative overflow-hidden rounded-2xl p-4 sm:p-5 text-white shadow-lg ring-1 ring-white/15 bg-[linear-gradient(135deg,var(--color-primary-700)_0%,var(--color-primary-600)_50%,var(--color-primary-800)_100%)] max-h-52 h-full">
           {/* dekorasi: glow & grid halus */}

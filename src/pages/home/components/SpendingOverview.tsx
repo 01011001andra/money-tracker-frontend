@@ -1,4 +1,4 @@
-import SkeletonLoader from "@/components/SkeletonLoader";
+import RenderComponent from "@/components/RenderComponent";
 import useRouter from "@/hooks/apps/useRouter";
 import { useGetDashboard } from "@/hooks/bff/useGetDashboard";
 import {
@@ -84,12 +84,13 @@ export default function SpendingOverview() {
         </Typography>
       </Box>
 
-      {isLoading ? (
-        <div className="flex gap-2">
-          <SkeletonLoader type="banner" />
-          <SkeletonLoader type="banner" />
-        </div>
-      ) : (
+      <RenderComponent
+        isLoading={isLoading}
+        skeletonType="banner"
+        skeletonCount={2}
+        classNameWrapper="grid grid-cols-2 gap-2"
+        emptyLabel="Overview is empty"
+      >
         <div className="grid grid-cols-2 gap-2">
           {data?.data?.spendingOverview?.map((item) => {
             return (
@@ -109,7 +110,7 @@ export default function SpendingOverview() {
             );
           })}
         </div>
-      )}
+      </RenderComponent>
     </div>
   );
 }

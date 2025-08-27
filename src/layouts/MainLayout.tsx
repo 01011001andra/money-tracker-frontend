@@ -20,7 +20,7 @@ const MainLayout: React.FC<React.PropsWithChildren> = () => {
 
   return (
     <div className="flex flex-col h-[100dvh]">
-      <div className="flex-1 overflow-auto max-w-xl mx-auto w-full h-full overflow-y-auto relative">
+      <div className="flex-1 overflow-auto max-w-xl min-w-xs mx-auto w-full h-full overflow-y-auto relative">
         <Outlet />
         <GlobalSheets />
         <PageLoader />

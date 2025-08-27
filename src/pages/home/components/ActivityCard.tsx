@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import useRouter from "@/hooks/apps/useRouter";
 import { useGetDashboard } from "@/hooks/bff/useGetDashboard";
-import SkeletonLoader from "@/components/SkeletonLoader";
+import RenderComponent from "@/components/RenderComponent";
 
 export default function ActivityCard() {
   const router = useRouter();
@@ -40,10 +40,13 @@ export default function ActivityCard() {
             See all
           </Button>
         </Box>
-
-        {isLoading ? (
-          <SkeletonLoader type="listWithImage" length={3} />
-        ) : (
+        <RenderComponent
+          isLoading={isLoading}
+          skeletonType="listWithImage"
+          dataTotal={0}
+          skeletonCount={3}
+          emptyLabel="Activity tidak ada"
+        >
           <div className="bg-white rounded-lg shadow-md px-2">
             <List className="">
               {data?.data?.activity?.map((it, idx) => (
@@ -140,7 +143,7 @@ export default function ActivityCard() {
               ))}
             </List>
           </div>
-        )}
+        </RenderComponent>
       </div>
     </>
   );
