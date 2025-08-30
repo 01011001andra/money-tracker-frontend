@@ -1,10 +1,12 @@
 import RenderComponent from "@/components/RenderComponent";
 import useRouter from "@/hooks/apps/useRouter";
 import { useGetDashboard } from "@/hooks/bff/useGetDashboard";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import {
   Box,
   Card,
   CardContent,
+  IconButton,
   LinearProgress,
   Stack,
   Typography,
@@ -40,7 +42,7 @@ function StatCard({ title, amount, progress, progressLabel }: StatProps) {
             variant="h6"
             fontWeight={800}
             lineHeight={1.1}
-            className="text-base"
+            className="text-xs py-1"
           >
             {formatIDR(amount)}
           </Typography>
@@ -49,7 +51,7 @@ function StatCard({ title, amount, progress, progressLabel }: StatProps) {
             <Box mt={1}>
               <LinearProgress
                 variant="determinate"
-                value={progress}
+                value={progress <= 100 ? progress : 100}
                 sx={{
                   height: 7,
                   borderRadius: 999,
@@ -80,30 +82,48 @@ export default function SpendingOverview() {
       {/* Header */}
       <Box display="flex" alignItems="center" justifyContent="space-between">
         <Typography variant="subtitle1" fontWeight={700}>
-          Spending Overview
+          Target overview
         </Typography>
+        {data?.data?.overview?.length && (
+          <IconButton
+            onClick={() => {
+              router.setQuery({ sheet: "target-action" });
+            }}
+          >
+            <Icon icon={"mdi:edit-outline"} fontSize={18} />
+          </IconButton>
+        )}
       </Box>
 
       <RenderComponent
         isLoading={isLoading}
         skeletonType="banner"
         skeletonCount={2}
+        dataTotal={data?.data?.overview?.length}
         classNameWrapper="grid grid-cols-2 gap-2"
-        emptyLabel="Overview is empty"
+        emptyComponent={
+          <div className="flex flex-col gap-1">
+            <span>Overview is empty</span>
+            <button
+              onClick={() => {
+                router.setQuery({ sheet: "target-action" });
+              }}
+              className="bg-primary text-white p-2 rounded-lg text-xs"
+            >
+              Add Target
+            </button>
+          </div>
+        }
       >
         <div className="grid grid-cols-2 gap-2">
-          {data?.data?.spendingOverview?.map((item) => {
+          {data?.data?.overview?.map((item) => {
+            if (item.amount == 0) return;
             return (
-              <div
-                className="cursor-pointer"
-                onClick={() => {
-                  router.push("/report");
-                }}
-              >
+              <div className="cursor-pointer">
                 <StatCard
-                  title={item.name}
-                  amount={item.total}
-                  progress={item.progress}
+                  title={item.type}
+                  amount={item.amount}
+                  progress={item.percentTarget || 0}
                   progressLabel={item.label}
                 />
               </div>

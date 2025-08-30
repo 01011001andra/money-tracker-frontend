@@ -1,20 +1,23 @@
 import { lazy } from "react";
 import Loadable from "@/components/Loadable";
-import NavigationLayout from "@/layouts/NavigationLayout";
+// import NavigationLayout from "@/layouts/NavigationLayout";
 
-// render
+// render - home
 // import Home from "@/pages/home";
 // import TransactionPage from "@/pages/transaction";
 // import Report from "@/pages/report";
 // import Setting from "@/pages/setting";
 
-// render - lazy
+// render - home - lazy
 const Home = Loadable(lazy(() => import("@/pages/home/index")));
 const TransactionPage = Loadable(
   lazy(() => import("@/pages/transaction/index"))
 );
 const Report = Loadable(lazy(() => import("@/pages/report/index")));
 const Setting = Loadable(lazy(() => import("@/pages/setting/index")));
+const NavigationLayout = Loadable(
+  lazy(() => import("@/layouts/NavigationLayout"))
+);
 
 // ==============================|| MAIN ROUTES ||============================== //
 

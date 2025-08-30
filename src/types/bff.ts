@@ -27,10 +27,10 @@ export type Dashboard = {
     type: "INCOME" | "EXPENSE";
     icon: Icon;
   }[];
-  spendingOverview: {
-    name: "income" | "expense";
-    total: number;
-    progress: number;
+  overview?: {
+    type: "daily" | "weekly" | "monthly" | "yearly";
+    amount: number;
+    percentTarget?: number | null;
     label: string;
   }[];
   notification: {

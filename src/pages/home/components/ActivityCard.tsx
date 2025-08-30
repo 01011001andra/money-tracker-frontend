@@ -43,9 +43,9 @@ export default function ActivityCard() {
         <RenderComponent
           isLoading={isLoading}
           skeletonType="listWithImage"
-          dataTotal={0}
+          dataTotal={data?.data.activity.length}
           skeletonCount={3}
-          emptyLabel="Activity tidak ada"
+          emptyComponent="Activity tidak ada"
         >
           <div className="bg-white rounded-lg shadow-md px-2">
             <List className="">

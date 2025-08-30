@@ -8,7 +8,7 @@ type RenderComponentProps = {
   dataTotal?: number;
   skeletonCount?: number;
   skeletonType: SkeletonType;
-  emptyLabel?: React.ReactNode;
+  emptyComponent?: React.ReactNode;
   isLoading: boolean;
   classNameWrapper?: string;
 };
@@ -18,7 +18,7 @@ const RenderComponent = ({
   dataTotal = 0,
   skeletonCount = 5,
   skeletonType,
-  emptyLabel = "Belum ada data",
+  emptyComponent = "Belum ada data",
   isLoading = false,
   classNameWrapper,
 }: RenderComponentProps) => {
@@ -37,8 +37,9 @@ const RenderComponent = ({
       <div className="flex w-full flex-col items-center justify-center py-6 text-gray-400">
         <Icon icon="radix-icons:value-none" fontSize={36} className="mb-2" />
         <span className="text-sm font-medium">
-          {emptyLabel ?? "Tidak ada data"}
+          {emptyComponent ?? "Tidak ada data"}
         </span>
+
       </div>
     );
   }

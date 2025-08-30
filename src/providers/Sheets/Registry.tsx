@@ -1,3 +1,4 @@
+import TargetAction from "@/pages/home/sheets/TargetAction";
 import ChangePassword from "@/pages/setting/sheets/ChangePassword";
 import EditProfile from "@/pages/setting/sheets/EditProfile";
 import TransactionAction from "@/pages/transaction/sheets/TransactionAction";
@@ -18,4 +19,5 @@ export const SHEET_REGISTRY: Record<
   "edit-profile": EditProfile,
   "change-password": ChangePassword,
   "transaction-action": TransactionAction,
+  "target-action": TargetAction,
 };

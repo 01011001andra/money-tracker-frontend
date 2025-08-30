@@ -71,7 +71,6 @@ const Headers = () => {
           </div>
         </div>
       )}
-
       {dashboardLoading ? (
         <SkeletonLoader type="avatar" />
       ) : (
