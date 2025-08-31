@@ -1,5 +1,6 @@
 // src/types/dashboard.ts
 
+import type { EChartsOption } from "echarts";
 import type { Icon } from "./icon";
 
 export type Dashboard = {
@@ -46,3 +47,12 @@ export type Dashboard = {
     }[];
   };
 };
+
+export type Report = {
+  name: string;
+  type: "slide" | "section";
+  charts: {
+    header: { title: string; subTitle: string };
+    option: EChartsOption;
+  }[];
+}[];

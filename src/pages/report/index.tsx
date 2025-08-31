@@ -1,8 +1,8 @@
 // import TransactionDetailsDrawer from "./components/ReportDetail";
 import EChart from "@/components/Echart";
-import { moneyOverviewOption } from "@/utils/constant";
+import RenderComponent from "@/components/RenderComponent";
+import { useGetReport } from "@/hooks/bff/useGetReport";
 import { Box, Typography } from "@mui/material";
-// import PeriodDropdown from "@/components/PeriodDropdown";
 
 // type TransactionItem = {
 //   id: string;
@@ -16,6 +16,7 @@ import { Box, Typography } from "@mui/material";
 // };
 
 const Transaction = () => {
+  const { data, isLoading } = useGetReport();
   // const [open, setOpen] = React.useState(false);
   // const [selected, setSelected] = React.useState<TransactionItem | null>(null);
 
@@ -29,17 +30,48 @@ const Transaction = () => {
       <h1 className="text-center font-bold  text-xl text-primary-600">
         Report
       </h1>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="subtitle1" fontWeight={700}>
-          Semua Transaksi
-        </Typography>
-        {/* <PeriodDropdown /> */}
-      </Box>
-      <div className="bg-white p-4 rounded-lg flex flex-col">
-        <span className="text-gray-500 text-xs">Ringkasan Uang </span>
-        <span className="text-black mb-2">Rp 12.000.000.- </span>
-        <EChart option={moneyOverviewOption} height={300} renderer="svg" />
-      </div>
+      <RenderComponent
+        isLoading={isLoading}
+        dataTotal={data?.data.length}
+        skeletonCount={4}
+        emptyComponent="Report is not available"
+        skeletonType="image"
+      >
+        {data?.data.map((item) => {
+          return (
+            <div className="mt-2 flex flex-col gap-2">
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" fontWeight={700}>
+                  {item.name}
+                </Typography>
+              </Box>
+              <div className="space-y-3">
+                {item.charts.map((chart) => {
+                  return (
+                    <div className="bg-white p-4 rounded-lg flex flex-col ">
+                      <span className="text-gray-500 text-xs">
+                        {chart.header.title}
+                      </span>
+                      <span className="text-black mb-2">
+                        {chart.header.subTitle}
+                      </span>
+                      <EChart
+                        option={chart.option}
+                        height={300}
+                        renderer="svg"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </RenderComponent>
       {/* <TransactionDetailsDrawer
         open={open}
         onOpen={() => setOpen(true)}

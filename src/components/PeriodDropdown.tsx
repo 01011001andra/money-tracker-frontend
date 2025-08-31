@@ -27,7 +27,7 @@ export default function PeriodDropdown({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const router = useRouter();
-  const filterQuery = router.query.filter as PeriodKey;
+  const filterQuery = (router.query.filter as PeriodKey) || "all";
 
   const handleSelect = (v: PeriodKey) => {
     router.setQuery((prev) => ({ ...prev, filter: v }), { replace: true });

@@ -51,9 +51,9 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
             gap: 2,
           }}
         >
-          <Skeleton variant="rectangular" width="100%" height={200} />
-          <Skeleton variant="text" width="60%" />
-          <Skeleton variant="text" width="40%" />
+          {Array.from({ length: length ?? 1 }).map((_, i) => (
+            <Skeleton key={i} variant="rectangular" width="100%" height={200} />
+          ))}
         </Box>
       );
 

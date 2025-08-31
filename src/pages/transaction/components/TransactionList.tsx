@@ -84,14 +84,16 @@ const TransactionList: React.FC<TransactionListProps> = ({
                   }
                   secondary={
                     <Typography
+                      className="text-xs mt-1"
                       variant="body2"
                       fontWeight={700}
                       sx={{
-                        fontSize: "0.75rem",
-                        color: item.amount >= 0 ? "success.main" : "error.main",
+                        color:
+                          item.type == "INCOME" ? "success.main" : "error.main",
                         whiteSpace: "nowrap",
                       }}
                     >
+                      {item.type == "EXPENSE" && "- "} Rp.
                       {formatIDR(item.amount)}
                     </Typography>
                   }

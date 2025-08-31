@@ -58,6 +58,8 @@ export default function TransactionDetailsDrawer({
     mutation.mutateAsync(item);
     onClose();
   };
+
+  if (!item) return;
   return (
     <SwipeableDrawer
       anchor="bottom"
@@ -98,11 +100,14 @@ export default function TransactionDetailsDrawer({
           <Typography
             variant="h5"
             fontWeight={900}
-            color={item && item.amount >= 0 ? "success.main" : "error.main"}
+            sx={{
+              color: item.type == "INCOME" ? "success.main" : "error.main",
+              whiteSpace: "nowrap",
+            }}
           >
-            {item ? formatIDR(item.amount) : "-"}
+            {item.type == "EXPENSE" && "- "} Rp.
+            {formatIDR(item.amount)}
           </Typography>
-
           <Box sx={{ display: "flex", gap: 2, color: "text.secondary" }}>
             <Box
               sx={{ display: "inline-flex", alignItems: "center", gap: 0.75 }}
