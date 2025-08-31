@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 import useRouter from "@/hooks/apps/useRouter";
 import { useLoginMutation } from "@/hooks/auth/useLogin";
+import DisabledSection from "@/components/DisabledSection";
 // import { useAuthStore } from "@/stores/auth";
 
 const Login: React.FC = () => {
@@ -13,8 +14,8 @@ const Login: React.FC = () => {
   const router = useRouter();
   // const from = router.location.state?.from || "/";
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = React.useState("demo@gmail.com");
+  const [password, setPassword] = React.useState("demo");
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -149,15 +150,17 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Link to="/forgot-password" className="text-sm text-primary">
-                Lupa password?
-              </Link>
-            </Box>
+            <DisabledSection>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Link to="/forgot-password" className="text-sm text-primary">
+                  Lupa password?
+                </Link>
+              </Box>
+            </DisabledSection>
 
             <Button
               type="submit"
@@ -181,14 +184,16 @@ const Login: React.FC = () => {
           </form>
 
           {/* --- Separator --- */}
-          <Box mt={3} textAlign="center">
-            <Typography variant="body2" color="text.secondary">
-              Belum punya akun?{" "}
-              <Link to="/register" className="text-primary">
-                Daftar
-              </Link>
-            </Typography>
-          </Box>
+          <DisabledSection>
+            <Box mt={3} textAlign="center">
+              <Typography variant="body2" color="text.secondary">
+                Belum punya akun?{" "}
+                <Link to="/register" className="text-primary">
+                  Daftar
+                </Link>
+              </Typography>
+            </Box>
+          </DisabledSection>
         </Box>
         <Divider
           textAlign="center"
@@ -196,28 +201,32 @@ const Login: React.FC = () => {
         >
           Atau
         </Divider>
-        <Box
-          mb={4}
-          sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-        ></Box>
-        {/* --- Tombol Google --- */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Button
-            variant="outlined"
-            size="large"
-            fullWidth
-            className="rounded-full border-primary text-primary"
-            startIcon={<Icon icon="logos:google-icon" width={18} height={18} />}
-            sx={{
-              borderRadius: 2,
-              textTransform: "none",
-              fontWeight: 600,
-              py: 1.25,
-            }}
-          >
-            Lanjut dengan Google
-          </Button>
-        </Box>
+        <DisabledSection>
+          <Box
+            mb={4}
+            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+          ></Box>
+          {/* --- Tombol Google --- */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Button
+              variant="outlined"
+              size="large"
+              fullWidth
+              className="rounded-full border-primary text-primary"
+              startIcon={
+                <Icon icon="logos:google-icon" width={18} height={18} />
+              }
+              sx={{
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 600,
+                py: 1.25,
+              }}
+            >
+              Lanjut dengan Google
+            </Button>
+          </Box>
+        </DisabledSection>
       </div>
     </div>
   );
