@@ -12,19 +12,20 @@ type TransactionTabsProps = {
 const TransactionTabs: React.FC<TransactionTabsProps> = ({
   setPage,
   setActualPage,
+  // actualPage,
 }) => {
   const router = useRouter();
-  // const { data } = useGetTransaction(null, {
+  // const { data, refetch } = useGetTransaction(null, {
   //   enabled: false,
   //   page: String(actualPage),
   // });
-
   const handleChangeTab = (v: "all" | "income" | "expense") => {
     if (!v) return;
     router.setQuery((prev) => ({ ...prev, tab: v }));
 
     setPage(1);
     setActualPage(1);
+    // refetch();
   };
   return (
     <ToggleButtonGroup

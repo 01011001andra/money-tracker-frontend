@@ -10,19 +10,15 @@ type UseGetTxOpts = {
   enabled?: boolean;
   page?: string; // mempertahankan bentukmu
 };
-
+type TabType = "all" | "income" | "expense";
+type FilterType = "all" | "day" | "week" | "month" | "year" | undefined;
 export function useGetTransaction(id?: string | null, opts: UseGetTxOpts = {}) {
   const qc = useQueryClient();
   const router = useRouter();
 
-  const filterQuery = router.query.filter as
-    | "all"
-    | "day"
-    | "week"
-    | "month"
-    | "year"
-    | undefined;
-  const tabQuery = router.query.tab as "all" | "income" | "expense";
+  const filterQuery = router.query.filter as FilterType;
+
+  const tabQuery = router.query.tab as TabType;
 
   const page = opts.page ?? "1";
   const limit = "10";
@@ -39,10 +35,16 @@ export function useGetTransaction(id?: string | null, opts: UseGetTxOpts = {}) {
     qs.set("type", tabQuery);
   }
 
+  // SATUKAN PARAM KE DALAM KEY
+  const listKey = id
+    ? key.transaction(id)
+    : [
+        ...key.transaction(),
+        { filter: filterQuery, tab: tabQuery, page, limit },
+      ];
+
   const q = useQuery({
-    queryKey: id
-      ? key.transaction(id)
-      : [...key.transaction(), filterQuery ?? "all", page, tabQuery ?? null],
+    queryKey: listKey,
     queryFn: async () => {
       const url = id ? `/transaction/${id}` : `/transaction?${qs.toString()}`;
       const { data } = await api.get<ResponseType<Transaction | Transaction[]>>(
@@ -50,7 +52,33 @@ export function useGetTransaction(id?: string | null, opts: UseGetTxOpts = {}) {
       );
       return data;
     },
-    enabled: opts.enabled ?? (!id ? true : false),
+    // queryFn: async ({ queryKey }) => {
+    //   console.log(queryKey);
+    //   if (id) {
+    //     const { data } = await api.get<ResponseType<Transaction>>(
+    //       `/transaction/${id}`
+    //     );
+    //     return data;
+    //   }
+    //   const [_base, params] = queryKey as [
+    //     unknown,
+    //     { filter: FilterType; tab: TabType; page: string; limit: string }
+    //   ];
+    //   console.log({ _base, params });
+    //   console.log(_base);
+    //   const qs = new URLSearchParams();
+    //   qs.set("page", params.page);
+    //   qs.set("limit", params.limit);
+    //   if (params.filter && params.filter !== "all")
+    //     qs.set("filter", params.filter);
+    //   if (params.tab !== "all") qs.set("type", params.tab);
+
+    //   const { data } = await api.get<ResponseType<Transaction | Transaction[]>>(
+    //     `/transaction?${qs.toString()}`
+    //   );
+    //   return data;
+    // },
+    // enabled: opts.enabled ?? (!id ? true : false),
     placeholderData: (prev) => prev,
   });
 
