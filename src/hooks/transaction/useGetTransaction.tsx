@@ -52,33 +52,8 @@ export function useGetTransaction(id?: string | null, opts: UseGetTxOpts = {}) {
       );
       return data;
     },
-    // queryFn: async ({ queryKey }) => {
-    //   console.log(queryKey);
-    //   if (id) {
-    //     const { data } = await api.get<ResponseType<Transaction>>(
-    //       `/transaction/${id}`
-    //     );
-    //     return data;
-    //   }
-    //   const [_base, params] = queryKey as [
-    //     unknown,
-    //     { filter: FilterType; tab: TabType; page: string; limit: string }
-    //   ];
-    //   console.log({ _base, params });
-    //   console.log(_base);
-    //   const qs = new URLSearchParams();
-    //   qs.set("page", params.page);
-    //   qs.set("limit", params.limit);
-    //   if (params.filter && params.filter !== "all")
-    //     qs.set("filter", params.filter);
-    //   if (params.tab !== "all") qs.set("type", params.tab);
-
-    //   const { data } = await api.get<ResponseType<Transaction | Transaction[]>>(
-    //     `/transaction?${qs.toString()}`
-    //   );
-    //   return data;
-    // },
-    // enabled: opts.enabled ?? (!id ? true : false),
+    staleTime: id ? 0 : 5000,
+    gcTime: id ? 0 : 5000,
     placeholderData: (prev) => prev,
   });
 

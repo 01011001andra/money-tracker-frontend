@@ -10,6 +10,7 @@ export default function DisabledSection({
   label?: string;
   children: React.ReactNode;
 }) {
+  // const handleClick = () => {}
   return (
     <Box sx={{ position: "relative" }}>
       {/* Overlay */}
@@ -30,7 +31,7 @@ export default function DisabledSection({
             px: 1.5,
             py: 0.75,
             borderRadius: 1.5,
-            bgcolor: "var(--color-primary-400)",
+            bgcolor: "var(--color-primary-600)",
             color: "white",
             display: "inline-flex",
             alignItems: "center",

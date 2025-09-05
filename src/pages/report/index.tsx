@@ -37,9 +37,9 @@ const Transaction = () => {
         emptyComponent="Report is not available"
         skeletonType="image"
       >
-        {data?.data.map((item) => {
+        {data?.data.map((item, index) => {
           return (
-            <div className="mt-2 flex flex-col gap-2">
+            <div className="mt-2 flex flex-col gap-2" key={index}>
               <Box
                 display="flex"
                 justifyContent="space-between"

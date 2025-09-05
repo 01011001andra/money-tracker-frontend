@@ -116,10 +116,10 @@ export default function SpendingOverview() {
         }
       >
         <div className="grid grid-cols-2 gap-2">
-          {data?.data?.overview?.map((item) => {
+          {data?.data?.overview?.map((item, index) => {
             if (item.amount == 0) return;
             return (
-              <div className="cursor-pointer">
+              <div className="cursor-pointer" key={index}>
                 <StatCard
                   title={item.type}
                   amount={item.amount}

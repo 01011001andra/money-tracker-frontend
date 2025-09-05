@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller, type SubmitHandler } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
@@ -42,6 +42,8 @@ import { useGetTransaction } from "@/hooks/transaction/useGetTransaction";
 import { useCreateUpdateTr } from "@/hooks/transaction/useCreateUpdateTr";
 import { useAppStore } from "@/stores/app";
 
+type SaveMode = "save" | "saveAndNew";
+
 const BOTTOM_BAR_SX = {
   pb: "env(safe-area-inset-bottom)",
   bgcolor: (t: any) =>
@@ -54,10 +56,7 @@ const BOTTOM_BAR_SX = {
     }`,
 } as const;
 
-const TransactionAction: React.FC<SheetScreenProps> = ({
-  closeTop,
-  closeSelf,
-}) => {
+const TransactionAction: React.FC<SheetScreenProps> = ({ closeTop }) => {
   // hooks
   const { loadingAction, setSelectedData } = useAppStore();
   const router = useRouter();
@@ -88,7 +87,7 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
     resolver: zodResolver(TransactionActionSchema),
     defaultValues: {
       title: "",
-      type: dynamicType as any,
+      type: (dynamicType as any) || "",
       amount: 0,
       transactionDate: dayjs().startOf("day").toISOString(),
       categoryId: "",
@@ -98,7 +97,7 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
   });
 
   // action
-  const handleSave: SubmitHandler<TransactionActionType> = async (values) => {
+  const saveTx = async (values: TransactionActionType, mode: SaveMode) => {
     if (!user) return;
     if (!isDirty) return;
     if (updateCreate.isPending) return;
@@ -137,8 +136,15 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        if (mode == "save") {
+          handleBack();
+        }
       });
   };
+  const onSave = handleSubmit((values) => saveTx(values, "save"));
+  const onSaveAndNew = handleSubmit((values) => saveTx(values, "saveAndNew"));
   const handleBack = () => {
     closeTop();
     if (router.query.id && router.query.sheet) {
@@ -182,10 +188,7 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
         <Alert severity="error">{getApiErrorMessage(updateCreate.error)}</Alert>
       )}
 
-      <form
-        onSubmit={handleSubmit(handleSave)}
-        className="w-full h-full flex flex-col "
-      >
+      <form onSubmit={onSave} className="w-full h-full flex flex-col ">
         {/* Body */}
         <div className="flex-1 overflow-auto">
           {/* Form card */}
@@ -471,13 +474,23 @@ const TransactionAction: React.FC<SheetScreenProps> = ({
           <div className="px-4 py-3 flex gap-2">
             <Button
               type="button"
-              onClick={closeSelf}
-              variant="text"
-              className="flex-1 rounded-full text-primary"
+              onClick={onSaveAndNew}
+              variant="contained"
+              className={`flex-1 rounded-full  disabled:bg-gray disabled:text-white ${
+                isDirty ? "bg-primary" : "bg-gray-300"
+              }`}
+              startIcon={
+                updateCreate.isPending ? (
+                  <Icon icon="line-md:loading-loop" width={18} />
+                ) : (
+                  <Icon icon="tabler:device-floppy" width={18} />
+                )
+              }
+              disabled={updateCreate.isPending}
+              aria-busy={updateCreate.isPending}
             >
-              Batal
+              {updateCreate.isPending ? "SAVING..." : "SAVE AND NEW"}
             </Button>
-
             <Button
               type="submit"
               variant="contained"
