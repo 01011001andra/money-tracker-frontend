@@ -55,9 +55,11 @@ const WalkThrough = () => {
               className="w-full -translate-y-1 rotate-180 select-none"
             />
             <section className="relative flex-1 bg-primary-600 px-6 pt-6 text-white">
-              <h1 className="text-2xl font-bold">KASKES: Catat uang pribadi</h1>
+              <h1 className="text-2xl font-bold">
+                MusCash: Catat uang pribadi
+              </h1>
               <p className="mt-2 text-white/90 capitalize">
-                Catat uang sendiri maupun uang kas jadi simpel
+                Catat uang jadi simpel
               </p>
             </section>
           </div>

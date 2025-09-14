@@ -23,7 +23,7 @@ export const useLocalStorageStore = create<Store>()(
       reset: () => set({ isWalkThrough: false, hydrated: true }),
     }),
     {
-      name: "kaskes", // key
+      name: "muscash", // key
       storage: createJSONStorage(() => localStorage),
 
       // simpan hanya yang diperlukan
