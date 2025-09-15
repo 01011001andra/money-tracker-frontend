@@ -31,21 +31,6 @@ jobs:
       - name: Package dist to dist.tar.gz
         run: tar -C dist -cvzf dist.tar.gz .
 
-      # Siapkan SSH key + known_hosts agar StrictHostKeyChecking aman
-      - name: Setup SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          HOST: ${{ secrets.HOST }}
-          PORT: ${{ secrets.PORT }}
-        run: |
-          set -e
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          # Tambahkan host key ke known_hosts (lebih aman daripada matikan StrictHostKeyChecking)
-          ssh-keyscan -p "${PORT:-22}" "$HOST" >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-
       # === setara: scp ./dist.tar.gz $user@$host:$path
       - name: Upload dist.tar.gz (scp)
         env:
