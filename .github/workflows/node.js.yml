@@ -31,7 +31,7 @@ jobs:
       - name: Package dist to dist.tar.gz
         run: tar -C dist -cvzf dist.tar.gz .
 
-          - name: Install cloudflared
+      - name: Install cloudflared
         run: |
           set -euxo pipefail
           curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cf.deb
@@ -92,6 +92,3 @@ jobs:
             tar -xvzf dist.tar.gz
             rm -f dist.tar.gz
           "
-
-CF-Access-Client-Id: 26f662d061a64c22daa796414ca4c0dc.access
-CF-Access-Client-Secret: 91ad80fc3b48f110e239473966b6a5393e9904b16b956db071e2a4952fee861b
