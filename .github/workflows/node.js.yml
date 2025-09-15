@@ -31,6 +31,41 @@ jobs:
       - name: Package dist to dist.tar.gz
         run: tar -C dist -cvzf dist.tar.gz .
 
+          - name: Install cloudflared
+        run: |
+          set -euxo pipefail
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cf.deb
+          sudo dpkg -i cf.deb
+          cloudflared --version
+
+      # Install cloudflared & buka proxy lokal 127.0.0.1:2222 -> ssh.musyan.my.id
+      - name: Start Cloudflare Access TCP proxy
+        env:
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          CF_SSH_HOST: ssh.musyan.my.id
+        run: |
+          set -euxo pipefail
+          # Jalankan proxy di background: localhost:2222 -> CF Access -> ssh.musyan.my.id
+          cloudflared access tcp --hostname "$CF_SSH_HOST" --listener 127.0.0.1:2222 &
+          # beri waktu untuk siap
+          sleep 2
+
+      # Siapkan SSH key + known_hosts agar StrictHostKeyChecking aman
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.HOST }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          set -e
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # Tambahkan host key ke known_hosts (lebih aman daripada matikan StrictHostKeyChecking)
+          ssh-keyscan -p "${PORT:-22}" "$HOST" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
       # === setara: scp ./dist.tar.gz $user@$host:$path
       - name: Upload dist.tar.gz (scp)
         env:
@@ -57,3 +92,6 @@ jobs:
             tar -xvzf dist.tar.gz
             rm -f dist.tar.gz
           "
+
+CF-Access-Client-Id: 26f662d061a64c22daa796414ca4c0dc.access
+CF-Access-Client-Secret: 91ad80fc3b48f110e239473966b6a5393e9904b16b956db071e2a4952fee861b
