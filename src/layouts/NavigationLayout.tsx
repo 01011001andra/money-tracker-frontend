@@ -23,6 +23,13 @@ const NavigationLayout: React.FC = () => {
         {/* Konten halaman */}
         <div className="flex-1 overflow-auto max-w-xl mx-auto w-full h-full overflow-y-auto">
           <Outlet />
+          <Icon
+            onClick={() => {
+              router.setQuery({ sheet: "chat" });
+            }}
+            icon={"heroicons-outline:chat"}
+            className="bg-primary text-white size-14 rounded-full p-2 absolute bottom-23 right-6 w-fit cursor-pointer"
+          />
         </div>
 
         {/* Bottom Navigation */}

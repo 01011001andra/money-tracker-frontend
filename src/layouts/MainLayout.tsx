@@ -9,10 +9,10 @@ import PageLoader from "@/components/PageLoader";
 
 const MainLayout: React.FC<React.PropsWithChildren> = () => {
   const router = useRouter();
+  useInitQuery();
   const { isWalkThrough } = useLocalStorageStore((store) => store);
   const { token } = useUserStore();
 
-  useInitQuery();
   React.useEffect(() => {
     if (!isWalkThrough) router.push("/walkthrough");
     if (router.pathname == "/walkthrough" && isWalkThrough) router.push("/");

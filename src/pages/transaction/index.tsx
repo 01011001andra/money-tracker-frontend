@@ -70,7 +70,7 @@ const TransactionPage = () => {
   return (
     <div className="relative max-w-xl w-full h-full">
       <IconButton
-        className="absolute bottom-6 right-6 bg-primary size-12 text-white z-50"
+        className="absolute bottom-6 left-6 bg-primary size-12 text-white z-50"
         onClick={handleOpenAdd}
       >
         <Icon icon="line-md:plus" fontSize={24} />

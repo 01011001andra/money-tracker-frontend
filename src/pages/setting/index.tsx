@@ -18,7 +18,6 @@ import useRouter from "@/hooks/apps/useRouter";
 import { useLogoutMutation } from "@/hooks/auth/useLogout";
 import { useAppStore } from "@/stores/app";
 import { useInitQuery } from "@/hooks/auth/useInit";
-import DisabledSection from "@/components/DisabledSection";
 
 type RowButtonItem = {
   icon: string;
@@ -188,26 +187,24 @@ export default function Setting() {
 
         {/* Notifications */}
         <SectionCard title="Notifikasi">
-          <DisabledSection label="On going">
-            <RowSwitch
-              icon="mdi:calendar-month-outline"
-              label="Daily Summary Reports"
-              checked={notifDaily}
-              onChange={setNotifDaily}
-            />
-            <RowSwitch
-              icon="mdi:calendar-month-outline"
-              label="Weekly Summary Reports"
-              checked={notifWeekly}
-              onChange={setNotifWeekly}
-            />
-            <RowSwitch
-              icon="mdi:calendar-month-outline"
-              label="Monthly Summary Reports"
-              checked={notifMonthly}
-              onChange={setNotifMonthly}
-            />
-          </DisabledSection>
+          <RowSwitch
+            icon="mdi:calendar-month-outline"
+            label="Daily Summary Reports"
+            checked={notifDaily}
+            onChange={setNotifDaily}
+          />
+          <RowSwitch
+            icon="mdi:calendar-month-outline"
+            label="Weekly Summary Reports"
+            checked={notifWeekly}
+            onChange={setNotifWeekly}
+          />
+          <RowSwitch
+            icon="mdi:calendar-month-outline"
+            label="Monthly Summary Reports"
+            checked={notifMonthly}
+            onChange={setNotifMonthly}
+          />
         </SectionCard>
 
         {/* Logout */}

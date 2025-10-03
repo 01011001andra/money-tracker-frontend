@@ -1,3 +1,4 @@
+import ChatSupport from "@/components/ChatSupport";
 import TargetAction from "@/pages/home/sheets/TargetAction";
 import ChangePassword from "@/pages/setting/sheets/ChangePassword";
 import EditProfile from "@/pages/setting/sheets/EditProfile";
@@ -20,4 +21,5 @@ export const SHEET_REGISTRY: Record<
   "change-password": ChangePassword,
   "transaction-action": TransactionAction,
   "target-action": TargetAction,
+  chat: ChatSupport,
 };
