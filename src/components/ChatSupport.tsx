@@ -390,7 +390,7 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
             </Tooltip>
           </label> */}
           {isTextEmpty && (
-            <div className="mb-5">
+            <div className="mb-5 relative">
               <ImageChat onGallery={(file) => handleGallery(file)} />
             </div>
           )}

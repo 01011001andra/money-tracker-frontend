@@ -35,7 +35,7 @@ export default function ImageChat({ onGallery }: Props) {
   };
 
   return (
-    <Box className="fixed bottom-4 right-13 z-50">
+    <Box className="absolute -bottom-6 -right-3 z-50">
       {/* input file tersembunyi */}
       <input
         ref={fileRef}
