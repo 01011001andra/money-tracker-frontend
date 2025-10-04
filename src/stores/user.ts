@@ -2,12 +2,14 @@
 import { create } from "zustand";
 import { getToken } from "@/utils/helper/helper";
 import type { User } from "@/types/auth";
+import { Capacitor } from "@capacitor/core";
 
 // --- Types ---
 
 interface StateType {
   user: User | null;
   token: string | null;
+  isNativeMobile: boolean;
 }
 
 interface ActionType {
@@ -21,6 +23,7 @@ export const useUserStore = create<AppStore>()((set) => {
   // STATE
   const state: StateType = {
     user: null,
+    isNativeMobile: Capacitor.isNativePlatform(),
     token: getToken(),
   };
 

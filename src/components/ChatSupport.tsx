@@ -5,12 +5,18 @@ import {
   Box,
   IconButton,
   Badge,
-  Avatar,
   Paper,
   InputBase,
   Chip,
   CircularProgress,
   Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Divider,
+  useMediaQuery,
 } from "@mui/material";
 import React, {
   useCallback,
@@ -19,7 +25,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
+import { useUserStore } from "@/stores/user";
+import { useSendMessage } from "@/hooks/chat/useSendMessage";
+import type { UseMutationResult } from "@tanstack/react-query";
+import type { MessagesType, SendMessageType } from "@/types/apps/chat";
+import { useMessageStore } from "@/stores/message";
 
 // ===== Badge Online =====
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -46,57 +57,29 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 // ====== (Stub) API: sambungkan ke webhook n8n kamu ======
-type ChatMessage = {
-  id: string;
-  role: "user" | "assistant" | "system";
-  content: string;
-  createdAt: string; // ISO
-  meta?: Record<string, any>;
-};
-
-async function fetchMessages(roomId: string): Promise<ChatMessage[]> {
-  console.log(roomId);
-  // Ganti ke webhook GET kamu (mis. /chat/messages?roomId=xxx)
-  // return (await fetch(url)).json();
-  // Dummy seed:
-  return [
-    {
-      id: "1",
-      role: "assistant",
-      content:
-        "Halo! Aku Muscash Bot. Kamu bisa ketik perintah seperti:\n• /catat beli jus apel 20rb\n• /ringkas hari ini\n• /saldo",
-      createdAt: new Date(Date.now() - 60_000).toISOString(),
-    },
-  ];
-}
-
 async function sendMessage(
-  roomId: string,
-  text: string
-): Promise<ChatMessage[]> {
-  // Ganti ke webhook POST kamu (mis. /chat/message)
-  // Body: { roomId, senderId, content }
-  // Return array message baru: biasanya 1 user + 1 balasan bot
-  // Di sini kita simulasi balasan bot:
-  const now = new Date().toISOString();
-  const userMsg: ChatMessage = {
-    id: crypto.randomUUID(),
-    role: "user",
-    content: text,
-    createdAt: now,
-  };
-  const assistantMsg: ChatMessage = {
-    id: crypto.randomUUID(),
-    role: "assistant",
-    content: `Kamu mengirim: "${text}".\n(Ini dummy balasan — sambungkan ke n8n untuk jawaban asli)`,
-    createdAt: new Date(Date.now() + 500).toISOString(),
-  };
-  // return dari webhook sebaiknya sudah berurutan
-  return [userMsg, assistantMsg];
+  userId: string,
+  message: string,
+  mutation: UseMutationResult<string, unknown, SendMessageType, unknown>,
+  image?: File | Blob
+): Promise<MessagesType | undefined> {
+  try {
+    const payload = { message: message, userId, image: image };
+    const result = await mutation.mutateAsync(payload);
+    const assistantMsg: MessagesType = {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      message: result,
+      createdAt: new Date(Date.now() + 500).toISOString(),
+    };
+    return assistantMsg;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // ====== Komponen gelembung pesan ======
-function MessageBubble({ m, mine }: { m: ChatMessage; mine: boolean }) {
+function MessageBubble({ m, mine }: { m: MessagesType; mine: boolean }) {
   const time = useMemo(() => {
     try {
       return new Date(m.createdAt).toLocaleTimeString("id-ID", {
@@ -121,7 +104,7 @@ function MessageBubble({ m, mine }: { m: ChatMessage; mine: boolean }) {
               : "bg-white text-gray-900 shadow-[0_10px_20px_-10px_rgba(0,0,0,.25)] dark:bg-semi-dark ",
           ].join(" ")}
         >
-          <div className="break-words">{m.content}</div>
+          <div className="break-words">{m.message}</div>
         </div>
       </div>
       <div
@@ -152,14 +135,26 @@ function TypingIndicator() {
 
 const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
   const router = useRouter();
-  const roomId = String(router.query.id || "room-muscash");
   const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { messages: messageStore, addMessage: addMessageStore } =
+    useMessageStore();
+  const [messages, setMessages] = useState<MessagesType[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [typing, setTyping] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { isNativeMobile, user } = useUserStore();
+  const userId = user?.id || "";
+  const mutation = useSendMessage();
+
+  // ===== State Modal Info Bot =====
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [infoOpen, setInfoOpen] = useState(false);
+  const openInfo = () => setInfoOpen(true);
+  const closeInfo = () => setInfoOpen(false);
 
   const autoScroll = useCallback(() => {
     requestAnimationFrame(() => {
@@ -173,14 +168,13 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
   useEffect(() => {
     (async () => {
       try {
-        const initial = await fetchMessages(roomId);
-        setMessages(initial);
+        setMessages(messageStore);
       } finally {
         setLoading(false);
         setTimeout(autoScroll, 50);
       }
     })();
-  }, [roomId, autoScroll]);
+  }, [userId, autoScroll]);
 
   useEffect(() => {
     autoScroll();
@@ -194,9 +188,9 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
   };
 
   const quickActions = [
-    { label: "Saldo", value: "/saldo" },
-    { label: "Ringkas Hari Ini", value: "/ringkas hari ini" },
-    { label: "Catat: Jus Apel 20rb", value: "/catat beli jus apel 20rb" },
+    { label: "Pemasukan", value: "/pemasukan " },
+    { label: "Pengeluaran", value: "/pengeluaran " },
+    { label: "Catat Transaksi", value: "/catat " },
   ];
 
   const onQuick = (val: string) => setText(val);
@@ -206,24 +200,49 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
     if (!content || sending) return;
     setSending(true);
     setTyping(true);
+
+    const now = new Date().toISOString();
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        role: "user",
+        message: text,
+        createdAt: now,
+      },
+    ]);
+    setText("");
+    addMessageStore({
+      id: crypto.randomUUID(),
+      role: "user",
+      message: text,
+      createdAt: now,
+    });
+
+    // fokus kembali ke input setelah kirim
+    requestAnimationFrame(() => inputRef.current?.focus());
+
     try {
-      const batch = await sendMessage(roomId, content);
-      setMessages((prev) => [...prev, ...batch]);
-      setText("");
+      const batch = await sendMessage(userId, content, mutation);
+      if (batch) {
+        setMessages((prev) => [...prev, batch]);
+        addMessageStore(batch);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
         {
           id: crypto.randomUUID(),
           role: "system",
-          content: "Gagal mengirim pesan. Coba lagi.",
+          message: "Gagal mengirim pesan. Coba lagi.",
           createdAt: new Date().toISOString(),
         },
       ]);
     } finally {
       setSending(false);
-      // kasih jeda kecil biar indikator ketik terasa
-      setTimeout(() => setTyping(false), 300);
+      setTyping(false);
+      requestAnimationFrame(() => inputRef.current?.focus());
     }
   };
 
@@ -235,20 +254,20 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col  ">
+    <div className="w-full h-full flex flex-col">
       {/* Top App Bar */}
-      <Box className="h-16 px-2 flex items-center gap-2 border-b border-gray-200  bg-white">
+      <Box className="h-16 px-2 flex items-center gap-2 border-b border-gray-200 bg-white">
         <IconButton aria-label="Back" onClick={handleBack} size="small">
           <Icon icon="tabler:arrow-left" width={22} />
         </IconButton>
 
         <StyledBadge
-          className="mr-2"
+          className="mr-2 bg-gray-100 p-2 rounded-full"
           overlap="circular"
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           variant="dot"
         >
-          <Avatar alt="Mus" src="/static/images/avatar/1.jpg" />
+          <Icon icon="bxs:bot" className="size-8 text-primary cursor-pointer" />
         </StyledBadge>
 
         <div className="w-full flex justify-between items-center">
@@ -256,24 +275,30 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
             <span className="font-bold text-base text-primary">
               Muscash Bot
             </span>
-            <span className="text-xs text-black dark:text-gray-400">
-              Online
-            </span>
+            <span className="text-xs text-black">Online</span>
           </div>
 
           <div className="flex items-center gap-1">
             <Tooltip title="Info Bot">
-              <Icon
-                icon="material-symbols:info-rounded"
-                className="size-7 text-primary cursor-pointer"
-              />
+              <IconButton
+                aria-label="Info Bot"
+                size="small"
+                onMouseDown={(e) => e.preventDefault()} // cegah blur input
+                onTouchStart={(e) => e.preventDefault()} // cegah blur input
+                onClick={openInfo}
+              >
+                <Icon
+                  icon="material-symbols:info-rounded"
+                  className="size-7 text-primary cursor-pointer"
+                />
+              </IconButton>
             </Tooltip>
           </div>
         </div>
       </Box>
 
       {/* Quick Actions */}
-      <Box className="px-3 py-2 border-b border-gray-200  bg-white/70 ">
+      <Box className="px-3 py-2 border-b border-gray-200 bg-white/70">
         <div className="flex gap-2 overflow-x-auto no-scrollbar">
           {quickActions.map((q) => (
             <Chip
@@ -310,18 +335,18 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
       </Box>
 
       {/* Input Bar */}
-      <Box className="h-20 px-3 pb-[env(safe-area-inset-bottom)] pt-2 border-t border-gray-200  bg-white ">
+      <Box
+        className={`${
+          isNativeMobile ? "pb-2.5 pt-1" : "pb-4 pt-1"
+        } px-3 flex items-center justify-center gap-2`}
+      >
         <Paper
           elevation={0}
-          className="w-full rounded-full px-2 py-1 flex items-center gap-1 bg-white  border border-gray-200  "
+          className="w-full rounded-full px-2 py-1.5 flex items-center gap-1 bg-white border border-gray-200"
         >
-          <Tooltip title="Lampirkan">
-            <IconButton size="small" className="shrink-0">
-              <Icon icon="tabler:paperclip" width={20} />
-            </IconButton>
-          </Tooltip>
-
           <InputBase
+            inputRef={inputRef}
+            autoFocus
             multiline
             maxRows={4}
             className="flex-1 px-2 text-sm overflow-y-auto max-h-10"
@@ -329,38 +354,89 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={onKeyDown}
-            disabled={sending}
           />
 
-          {sending ? (
-            <div className="px-2">
-              <CircularProgress size={18} />
-            </div>
-          ) : (
-            <>
-              <Tooltip title="Kirim">
-                <IconButton
-                  size="small"
-                  color="primary"
-                  className="shrink-0"
-                  onClick={onSend}
-                  disabled={!text.trim()}
-                >
-                  <Icon icon="tabler:send" width={20} />
-                </IconButton>
-              </Tooltip>
-            </>
-          )}
+          <Tooltip
+            title="Lampirkan"
+            className="text-gray-400"
+            onClick={() => {
+              alert("Coming soon!!");
+            }}
+          >
+            <Icon icon="basil:camera-solid" className="size-7" />
+          </Tooltip>
         </Paper>
-
-        {/* Hint kecil */}
-        <div className="text-[10px] text-black mt-1 px-2">
-          Tips: coba ketik{" "}
-          <span className="font-mono bg-gray-100 px-1 rounded">
-            /catat beli kopi 15rb
-          </span>
-        </div>
+        <Tooltip
+          title="Kirim"
+          className={`${
+            !text.trim() ? "bg-gray-400" : " bg-primary"
+          } text-white p-2`}
+        >
+          <IconButton
+            size="small"
+            color="primary"
+            className="shrink-0"
+            onClick={onSend}
+            disabled={!text.trim()}
+            onMouseDown={(e) => e.preventDefault()}
+            onTouchStart={(e) => e.preventDefault()}
+          >
+            <Icon icon="tabler:send" className="size-5" />
+          </IconButton>
+        </Tooltip>
       </Box>
+
+      {/* Modal Info Bot */}
+      <Dialog
+        open={infoOpen}
+        onClose={closeInfo}
+        fullScreen={fullScreen}
+        aria-labelledby="bot-info-title"
+        disableEnforceFocus
+        keepMounted
+      >
+        <DialogTitle id="bot-info-title" className="text-primary font-bold">
+          Tentang Muscash Bot
+        </DialogTitle>
+
+        <DialogContent dividers className="space-y-3">
+          <div className="text-sm text-gray-800">
+            <p className="mb-2">
+              Muscash Bot membantu kamu mencatat transaksi dan melihat ringkasan
+              keuangan lewat perintah singkat.
+            </p>
+
+            <Divider className="my-2" />
+
+            <p className="font-semibold">Contoh perintah:</p>
+            <ul className="list-disc ml-5 mt-1">
+              <li>
+                <code>/catat beli jus apel 20rb</code>
+              </li>
+              <li>
+                <code>/pengeluaran 24 Mei 2025</code>
+              </li>
+              <li>
+                <code>/pemasukan 24 Mei 2025</code>
+              </li>
+            </ul>
+
+            <Divider className="my-2" />
+
+            <p className="text-xs text-gray-600 leading-relaxed">
+              <b>Catatan:</b> Anda sedang berinteraksi dengan asisten otomatis.
+              Sesi percakapan ini bersifat sementara dan tidak disimpan; seluruh
+              pesan akan terhapus saat aplikasi dimulai ulang.
+            </p>
+          </div>
+        </DialogContent>
+
+        <DialogActions className="px-4 py-2">
+          <Button onClick={closeInfo} variant="contained" color="primary">
+            Mengerti
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
