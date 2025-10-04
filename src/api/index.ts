@@ -4,8 +4,8 @@ import axios from "axios";
 
 // Buat instance axios
 const api = axios.create({
-  // baseURL: "https://api-muscash.musyan.my.id/api/v1", // Ganti sesuai API kamu
-  baseURL: "http://localhost:3000/api/v1", // Ganti sesuai API kamu
+  baseURL: "https://api-muscash.musyan.my.id/api/v1", // Ganti sesuai API kamu
+  // baseURL: "http://localhost:3000/api/v1", // Ganti sesuai API kamu
 });
 
 // Request Interceptor

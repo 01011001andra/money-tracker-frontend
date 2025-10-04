@@ -18,6 +18,7 @@ import {
   Divider,
   useMediaQuery,
 } from "@mui/material";
+
 import React, {
   useCallback,
   useEffect,
@@ -31,6 +32,8 @@ import { useSendMessage } from "@/hooks/chat/useSendMessage";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { MessagesType, SendMessageType } from "@/types/apps/chat";
 import { useMessageStore } from "@/stores/message";
+import { fileToBlobUrl } from "@/utils/helper/helper";
+import ImageChat from "./ImageChat";
 
 // ===== Badge Online =====
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -104,7 +107,15 @@ function MessageBubble({ m, mine }: { m: MessagesType; mine: boolean }) {
               : "bg-white text-gray-900 shadow-[0_10px_20px_-10px_rgba(0,0,0,.25)] dark:bg-semi-dark ",
           ].join(" ")}
         >
-          <div className="break-words">{m.message}</div>
+          {m.image ? (
+            <img
+              src={`${m.image}`}
+              alt="Image"
+              className="size-96 object-contain"
+            />
+          ) : (
+            <div className="break-words">{m.message}</div>
+          )}
         </div>
       </div>
       <div
@@ -148,7 +159,7 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
   const { isNativeMobile, user } = useUserStore();
   const userId = user?.id || "";
   const mutation = useSendMessage();
-
+  const isTextEmpty = !text.trim();
   // ===== State Modal Info Bot =====
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -195,9 +206,11 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
 
   const onQuick = (val: string) => setText(val);
 
-  const onSend = async () => {
-    const content = text.trim();
-    if (!content || sending) return;
+  const onSend = async (image?: File | Blob) => {
+    if (!image) {
+      const content = text.trim();
+      if (!content || sending) return;
+    }
     setSending(true);
     setTyping(true);
 
@@ -210,6 +223,7 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
         role: "user",
         message: text,
         createdAt: now,
+        image: image ? fileToBlobUrl(image).url : null,
       },
     ]);
     setText("");
@@ -224,7 +238,7 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
     requestAnimationFrame(() => inputRef.current?.focus());
 
     try {
-      const batch = await sendMessage(userId, content, mutation);
+      const batch = await sendMessage(userId, text, mutation, image);
       if (batch) {
         setMessages((prev) => [...prev, batch]);
         addMessageStore(batch);
@@ -251,6 +265,10 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
       e.preventDefault();
       onSend();
     }
+  };
+
+  const handleGallery = (file: File) => {
+    onSend(file);
   };
 
   return (
@@ -342,7 +360,7 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
       >
         <Paper
           elevation={0}
-          className="w-full rounded-full px-2 py-1.5 flex items-center gap-1 bg-white border border-gray-200"
+          className="w-full rounded-full px-2 py-1.5 flex items-center gap-1 bg-white border border-gray-200 relative"
         >
           <InputBase
             inputRef={inputRef}
@@ -355,29 +373,44 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={onKeyDown}
           />
-
-          <Tooltip
-            title="Lampirkan"
-            className="text-gray-400"
-            onClick={() => {
-              alert("Coming soon!!");
-            }}
-          >
-            <Icon icon="basil:camera-solid" className="size-7" />
-          </Tooltip>
+          {/* 
+          <label htmlFor="gallery">
+            <input
+              type="file"
+              id="gallery"
+              className="hidden"
+              onChange={handleGallery}
+            />
+            <Tooltip
+              title="Lampirkan"
+              className="text-gray-400"
+              // onClick={() => {
+              //   alert("Coming soon!!");
+              // }}
+            >
+              <Icon icon="basil:camera-solid" className="size-7" />
+            </Tooltip>
+          </label> */}
+          {isTextEmpty && (
+            <div className="mb-5">
+              <ImageChat onGallery={(file) => handleGallery(file)} />
+            </div>
+          )}
         </Paper>
         <Tooltip
           title="Kirim"
           className={`${
-            !text.trim() ? "bg-gray-400" : " bg-primary"
+            isTextEmpty ? "bg-gray-400" : " bg-primary"
           } text-white p-2`}
         >
           <IconButton
             size="small"
             color="primary"
             className="shrink-0"
-            onClick={onSend}
-            disabled={!text.trim()}
+            onClick={() => {
+              onSend();
+            }}
+            disabled={isTextEmpty}
             onMouseDown={(e) => e.preventDefault()}
             onTouchStart={(e) => e.preventDefault()}
           >

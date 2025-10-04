@@ -8,6 +8,6 @@ export type MessagesType = {
   id: string;
   role: "user" | "assistant" | "system";
   message: string | null;
-  image?: string;
+  image?: string | null;
   createdAt: string;
 };
