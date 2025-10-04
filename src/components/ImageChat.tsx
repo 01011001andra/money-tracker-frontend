@@ -27,6 +27,7 @@ export default function ImageChat({ onGallery }: Props) {
   };
 
   const openGalleryPicker = () => fileRef.current?.click();
+
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (f) onGallery(f);
@@ -34,7 +35,7 @@ export default function ImageChat({ onGallery }: Props) {
   };
 
   return (
-    <Box className="fixed bottom-5.5 right-13 z-50">
+    <Box className="fixed bottom-4 right-13 z-50">
       {/* input file tersembunyi */}
       <input
         ref={fileRef}

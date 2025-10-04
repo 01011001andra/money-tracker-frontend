@@ -156,7 +156,7 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
   const [sending, setSending] = useState(false);
   const [typing, setTyping] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { isNativeMobile, user } = useUserStore();
+  const { user } = useUserStore();
   const userId = user?.id || "";
   const mutation = useSendMessage();
   const isTextEmpty = !text.trim();
@@ -354,9 +354,7 @@ const ChatSupport: React.FC<SheetScreenProps> = ({ closeTop }) => {
 
       {/* Input Bar */}
       <Box
-        className={`${
-          isNativeMobile ? "pb-2.5 pt-1" : "pb-4 pt-1"
-        } px-3 flex items-center justify-center gap-2`}
+        className={`pb-2.5 pt-1 px-3 flex items-center justify-center gap-2`}
       >
         <Paper
           elevation={0}
